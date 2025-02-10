@@ -230,7 +230,7 @@
       const linksContainer = document.getElementById('linksContainer');
       let html = '<h2>Links</h2>';
       config.LINKS.forEach(link => {
-        html += `<a href="${link.url}" target="_blank">${link.name}</a>`;
+        html += `<a href="${link.url}">${link.name}</a>`;
       });
       linksContainer.innerHTML = html;
       linksContainer.style.display = 'block';
