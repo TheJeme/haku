@@ -26,8 +26,6 @@
       background: linear-gradient(to bottom, #b8bbc0 0%, #b0b4ba 30%, #a1aab1 50%, #b0b4ba 70%, #b8bbc0 100%);
       color: #000;
       user-select: none;
-    }
-    .container {
       text-align: center;
     }
     input[type="text"] {
@@ -40,6 +38,16 @@
       border-radius: 0;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
+    a {
+      color: black;
+      text-decoration: none;
+      text-decoration: underline;
+      padding: 10px;
+    }
+    a:hover {
+      background-color: black;
+      color: white;
+    }
     #forecast {
       position: absolute;
       top: 30px;
@@ -51,6 +59,32 @@
       height: 280px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
       user-select: text;
+    }
+    #linksContainer {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      border: 3px solid black;
+      padding: 26px;
+      text-align: center;
+      width: 280px;
+      height: calc(100% - 120px);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    #pixelContainer {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      border: 3px solid black;
+      padding: 26px;
+      width: 280px;
+      height: 280px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    #pixelCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
     .progress-bar-container {
       position: fixed;
@@ -72,29 +106,18 @@
       font-weight: bold;
       color: black;
     }
-    #pixelContainer {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      border: 3px solid black;
-      padding: 26px;
-      width: 280px;
-      height: 280px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    #pixelCanvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <main>
     <h1>白</h1>
     <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleKeyPress(event)" />
-  </div>
+  </main>
 
+  <!-- Left-Side Links Container -->
+  <div id="linksContainer"></div>
+
+  <!-- Forecast Container -->
   <div id="forecast" style="display: none;"></div>
 
   <div class="progress-bar-container">
@@ -103,7 +126,7 @@
 
   <div id="dayPercentage"></div>
 
-  <!-- New Pixel Grid Container -->
+  <!-- Pixel Grid Container (Bottom Right) -->
   <div id="pixelContainer">
     <canvas id="pixelCanvas" width="280" height="280"></canvas>
   </div>
@@ -129,7 +152,7 @@
         const data = await response.json();
         
         const forecastContainer = document.getElementById('forecast');
-        forecastContainer.innerHTML = `<h3>${config.CITY} Weather</h3>`;
+        forecastContainer.innerHTML = `<h2>${config.CITY}</h2>`;
         forecastContainer.style.display = 'block';
 
         data.list.forEach((item, index) => {
@@ -163,17 +186,31 @@
       
       for (let row = 0; row < gridCount; row++) {
         for (let col = 0; col < gridCount; col++) {
-          // Randomly select black or white
+          // Randomly select black or transparent
           ctx.fillStyle = Math.random() < 0.5 ? 'black' : 'transparent';
           ctx.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
         }
       }
     }
 
+    async function updateLinks() {
+      const config = await loadConfig();
+      if (!config || !config.LINKS) return;
+
+      const linksContainer = document.getElementById('linksContainer');
+      let html = '<h2>Links</h2>';
+      config.LINKS.forEach(link => {
+        html += `<p><a href="${link.url}" target="_blank">${link.name}</a></p>`;
+      });
+      linksContainer.innerHTML = html;
+      linksContainer.style.display = 'block';
+    }
+
     // Initialize functions
     updateWeather();
     updateProgressBar();
     drawPixelGrid();
+    updateLinks();
     setInterval(updateProgressBar, 60000);
   </script>
 </body>
