@@ -119,8 +119,8 @@
     }
     #dayPercentage {
       position: fixed;
-      bottom: 5px;
-      left: 5px;
+      bottom: 1px;
+      left: 1px;
       font-size: 14px;
       font-weight: bold;
       color: black;
@@ -177,8 +177,10 @@
         data.list.forEach((item, index) => {
           if (index % 8 === 0) {
             const date = new Date(item.dt * 1000);
+            let dayIndex = date.getDay();
+            dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
             const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-            const formattedDate = `${days[date.getDay()]} ${date.getDate()}.${date.getMonth() + 1}`;
+            const formattedDate = `${days[dayIndex]} ${date.getDate()}.${date.getMonth() + 1}`;
             forecastContainer.innerHTML += `<p>${formattedDate}: ${Math.round(item.main.temp)}°C</p>`;
           }
         });
