@@ -10,44 +10,47 @@
   <meta property="og:description" content="A simple search and weather app with live time display">
   <meta property="og:image" content="favicon.ico">
   <meta property="og:url" content="https://yourwebsite.com">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.svg" type="image/x-icon">
   <title>Haku</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       font-size: 18px;
+      font-weight: 500;
       margin: 0;
       background: linear-gradient(to bottom, #b8bbc0 0%, #b0b4ba 30%, #a1aab1 50%, #b0b4ba 70%, #b8bbc0 100%);
       color: #000;
+      user-select: none;
     }
     .container {
       text-align: center;
-    }
-    .search-bar {
-      margin-top: 20px;
     }
     input[type="text"] {
       background-color: transparent;
       padding: 10px;
       font-size: 1.2em;
-      width: 300px;
-      border: 2px solid black;
+      width: 280px;
+      border: 3px solid black;
       outline: none;
       border-radius: 0;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
     #forecast {
       position: absolute;
       top: 20px;
-      right: 20px;
-      color: black;
+      left: 50%;
+      transform: translateX(-50%);
       border: 3px solid black;
-      padding: 20px;
-      text-align: left;
+      padding: 15px;
+      text-align: center;
+      width: 280px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      user-select: text;
     }
     .progress-bar-container {
       position: fixed;
@@ -89,15 +92,6 @@
       }
     }
 
-    async function updateClock() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-      updateProgressBar();
-    }
-
     async function updateWeather() {
       const config = await loadConfig();
       if (!config) return;
@@ -107,24 +101,19 @@
         const data = await response.json();
         
         const forecastContainer = document.getElementById('forecast');
-        forecastContainer.innerHTML = `<h3>${config.CITY}</h3>`;
+        forecastContainer.innerHTML = `<h3>${config.CITY} Weather</h3>`;
         forecastContainer.style.display = 'block';
 
         data.list.forEach((item, index) => {
           if (index % 8 === 0) {
             const date = new Date(item.dt * 1000);
-            const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
+            const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+            const formattedDate = `${days[date.getDay()]} ${date.getDate()}.${date.getMonth() + 1}`;
             forecastContainer.innerHTML += `<p>${formattedDate}: ${Math.round(item.main.temp)}°C</p>`;
           }
         });
       } catch (error) {
         console.log('Error loading forecast:', error);
-      }
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === 'Enter') {
-        searchGoogle();
       }
     }
 
@@ -136,8 +125,6 @@
       document.getElementById('progressBar').style.width = `${progress}%`;
     }
 
-    setInterval(updateClock, 1000);
-    updateClock();
     updateWeather();
   </script>
 </body>
