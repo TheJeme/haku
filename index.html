@@ -243,11 +243,7 @@
       canvas.toBlob(blob => {
         if (blob) {
           const item = new ClipboardItem({ "image/png": blob });
-          navigator.clipboard.write([item]).then(() => {
-            console.log('Canvas image copied to clipboard as PNG.');
-          }).catch(err => {
-            console.error('Error copying canvas image to clipboard:', err);
-          });
+          navigator.clipboard.write([item]);
         } else {
           console.error("Failed to convert canvas to blob.");
         }
