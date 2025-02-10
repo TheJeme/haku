@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Haku - Simple search and weather app">
+  <meta name="keywords" content="search, weather, clock, Haku">
+  <meta name="author" content="Haku">
+  <meta property="og:title" content="Haku">
+  <meta property="og:description" content="A simple search and weather app with live time display">
+  <meta property="og:image" content="favicon.ico">
+  <meta property="og:url" content="https://yourwebsite.com">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>Haku</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-size: 18px;
+      margin: 0;
+      background: linear-gradient(to bottom, #b8bbc0 0%, #b0b4ba 30%, #a1aab1 50%, #b0b4ba 70%, #b8bbc0 100%);
+      color: #000;
+    }
+    .container {
+      text-align: center;
+    }
+    .search-bar {
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      background-color: transparent;
+      padding: 10px;
+      font-size: 1.2em;
+      width: 300px;
+      border: 2px solid black;
+      outline: none;
+      border-radius: 0;
+    }
+    #forecast {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: black;
+      border: 3px solid black;
+      padding: 20px;
+      text-align: left;
+    }
+    .progress-bar-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="search-bar">
+      <h1>白</h1>
+      <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleKeyPress(event)">
+    </div>
+  </div>
+
+  <div id="forecast" style="display: none;"></div>
+  
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <script>
+    async function loadConfig() {
+      try {
+        const response = await fetch('config.json');
+        const config = await response.json();
+        return config;
+      } catch (error) {
+        console.error('Error loading config:', error);
+        return null;
+      }
+    }
+
+    async function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+      updateProgressBar();
+    }
+
+    async function updateWeather() {
+      const config = await loadConfig();
+      if (!config) return;
+      
+      try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${config.CITY}&appid=${config.WEATHER_API_KEY}&units=metric`);
+        const data = await response.json();
+        
+        const forecastContainer = document.getElementById('forecast');
+        forecastContainer.innerHTML = `<h3>${config.CITY}</h3>`;
+        forecastContainer.style.display = 'block';
+
+        data.list.forEach((item, index) => {
+          if (index % 8 === 0) {
+            const date = new Date(item.dt * 1000);
+            const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
+            forecastContainer.innerHTML += `<p>${formattedDate}: ${Math.round(item.main.temp)}°C</p>`;
+          }
+        });
+      } catch (error) {
+        console.log('Error loading forecast:', error);
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        searchGoogle();
+      }
+    }
+
+    function updateProgressBar() {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      const progress = ((now - startOfDay) / (endOfDay - startOfDay)) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+    updateWeather();
+  </script>
+</body>
+</html>
