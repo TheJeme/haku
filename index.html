@@ -13,6 +13,11 @@
   <link rel="icon" href="favicon.svg" type="image/x-icon" />
   <title>Haku</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
@@ -22,7 +27,7 @@
       height: 100vh;
       font-size: 18px;
       font-weight: 500;
-      margin: 0;
+      line-height: 1.6;
       background: linear-gradient(to bottom, #b8bbc0 0%, #b0b4ba 30%, #a1aab1 50%, #b0b4ba 70%, #b8bbc0 100%);
       color: #000;
       user-select: none;
@@ -32,13 +37,14 @@
       background-color: transparent;
       padding: 10px;
       font-size: 1.2em;
-      width: 280px;
+      width: 300px;
       border: 3px solid black;
       outline: none;
       border-radius: 0;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
     a {
+      display: block;
       color: black;
       text-decoration: none;
       text-decoration: underline;
@@ -48,15 +54,26 @@
       background-color: black;
       color: white;
     }
+    p {
+      margin: 6px 0;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
     #forecast {
       position: absolute;
       top: 30px;
       right: 30px;
       border: 3px solid black;
-      padding: 26px;
+      padding: 30px;
       text-align: center;
-      width: 280px;
-      height: 280px;
+      width: 300px;
+      height: 300px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
       user-select: text;
     }
@@ -65,10 +82,10 @@
       top: 30px;
       left: 30px;
       border: 3px solid black;
-      padding: 26px;
+      padding: 30px;
       text-align: center;
-      width: 280px;
-      height: calc(100% - 120px);
+      width: 300px;
+      height: calc(100% - 60px);
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
     #pixelContainer {
@@ -76,10 +93,12 @@
       bottom: 30px;
       right: 30px;
       border: 3px solid black;
-      padding: 26px;
-      width: 280px;
-      height: 280px;
+      padding: 30px;
+      width: 300px;
+      height: 300px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      /* Make it clear the container is clickable */
+      cursor: pointer;
     }
     #pixelCanvas {
       display: block;
@@ -111,11 +130,11 @@
 <body>
   <main>
     <h1>白</h1>
-    <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleKeyPress(event)" />
+    <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleSearch(event)" />
   </main>
 
   <!-- Left-Side Links Container -->
-  <div id="linksContainer"></div>
+  <div id="linksContainer" style="display: none;"></div>
 
   <!-- Forecast Container -->
   <div id="forecast" style="display: none;"></div>
@@ -128,7 +147,7 @@
 
   <!-- Pixel Grid Container (Bottom Right) -->
   <div id="pixelContainer">
-    <canvas id="pixelCanvas" width="280" height="280"></canvas>
+    <canvas id="pixelCanvas" width="270" height="270"></canvas>
   </div>
 
   <script>
@@ -158,13 +177,22 @@
         data.list.forEach((item, index) => {
           if (index % 8 === 0) {
             const date = new Date(item.dt * 1000);
-            const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+            const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
             const formattedDate = `${days[date.getDay()]} ${date.getDate()}.${date.getMonth() + 1}`;
             forecastContainer.innerHTML += `<p>${formattedDate}: ${Math.round(item.main.temp)}°C</p>`;
           }
         });
       } catch (error) {
         console.log('Error loading forecast:', error);
+      }
+    }
+
+    function handleSearch(event) {
+      if (event.key === 'Enter') {
+        const query = event.target.value.trim();
+        if (query) {
+          window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
       }
     }
 
@@ -180,9 +208,9 @@
     function drawPixelGrid() {
       const canvas = document.getElementById('pixelCanvas');
       const ctx = canvas.getContext('2d');
-      const gridCount = 10; // 10x10 grid
-      const cellWidth = canvas.width / gridCount;
-      const cellHeight = canvas.height / gridCount;
+      const gridCount = 9; // 10x10 grid
+      const cellWidth = 30;
+      const cellHeight = 30;
       
       for (let row = 0; row < gridCount; row++) {
         for (let col = 0; col < gridCount; col++) {
@@ -200,11 +228,30 @@
       const linksContainer = document.getElementById('linksContainer');
       let html = '<h2>Links</h2>';
       config.LINKS.forEach(link => {
-        html += `<p><a href="${link.url}" target="_blank">${link.name}</a></p>`;
+        html += `<a href="${link.url}" target="_blank">${link.name}</a>`;
       });
       linksContainer.innerHTML = html;
       linksContainer.style.display = 'block';
     }
+
+    // New function to generate a random UUID (v4)
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    // Add click event listener to the right bottom container to copy a random UUID to the clipboard
+    document.getElementById('pixelContainer').addEventListener('click', function() {
+      const uuid = generateUUID();
+      navigator.clipboard.writeText(uuid).then(() => {
+        console.log('UUID copied to clipboard:', uuid);
+      }).catch(err => {
+        console.error('Error copying UUID to clipboard:', err);
+      });
+    });
 
     // Initialize functions
     updateWeather();
