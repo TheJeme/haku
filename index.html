@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Haku - Simple search and weather app">
-  <meta name="keywords" content="search, weather, clock, Haku">
-  <meta name="author" content="Haku">
-  <meta property="og:title" content="Haku">
-  <meta property="og:description" content="A simple search and weather app with live time display">
-  <meta property="og:image" content="favicon.ico">
-  <meta property="og:url" content="https://yourwebsite.com">
-  <link rel="icon" href="favicon.svg" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Haku - Simple search and weather app" />
+  <meta name="keywords" content="search, weather, clock, Haku" />
+  <meta name="author" content="Haku" />
+  <meta property="og:title" content="Haku" />
+  <meta property="og:description" content="A simple search and weather app with live time display" />
+  <meta property="og:image" content="favicon.ico" />
+  <meta property="og:url" content="https://yourwebsite.com" />
+  <link rel="icon" href="favicon.svg" type="image/x-icon" />
   <title>Haku</title>
   <style>
     body {
@@ -42,13 +42,13 @@
     }
     #forecast {
       position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 30px;
+      right: 30px;
       border: 3px solid black;
-      padding: 15px;
+      padding: 26px;
       text-align: center;
       width: 280px;
+      height: 280px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
       user-select: text;
     }
@@ -72,23 +72,41 @@
       font-weight: bold;
       color: black;
     }
+    #pixelContainer {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      border: 3px solid black;
+      padding: 26px;
+      width: 280px;
+      height: 280px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    #pixelCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="search-bar">
-      <h1>白</h1>
-      <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleKeyPress(event)">
-    </div>
+    <h1>白</h1>
+    <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleKeyPress(event)" />
   </div>
 
   <div id="forecast" style="display: none;"></div>
-  
+
   <div class="progress-bar-container">
     <div id="progressBar"></div>
   </div>
-  
+
   <div id="dayPercentage"></div>
+
+  <!-- New Pixel Grid Container -->
+  <div id="pixelContainer">
+    <canvas id="pixelCanvas" width="280" height="280"></canvas>
+  </div>
 
   <script>
     async function loadConfig() {
@@ -136,8 +154,26 @@
       document.getElementById('dayPercentage').textContent = `${Math.round(progress)}%`;
     }
 
+    function drawPixelGrid() {
+      const canvas = document.getElementById('pixelCanvas');
+      const ctx = canvas.getContext('2d');
+      const gridCount = 10; // 10x10 grid
+      const cellWidth = canvas.width / gridCount;
+      const cellHeight = canvas.height / gridCount;
+      
+      for (let row = 0; row < gridCount; row++) {
+        for (let col = 0; col < gridCount; col++) {
+          // Randomly select black or white
+          ctx.fillStyle = Math.random() < 0.5 ? 'black' : 'transparent';
+          ctx.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+        }
+      }
+    }
+
+    // Initialize functions
     updateWeather();
     updateProgressBar();
+    drawPixelGrid();
     setInterval(updateProgressBar, 60000);
   </script>
 </body>
