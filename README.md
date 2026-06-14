@@ -7,10 +7,17 @@ Haku is designed to stay small: no build step, no backend, no account, and no `c
 ## Features
 
 - Search with general engines, media/community search, and developer/reference targets.
+- Use prefixes such as `yt cats`, `gh haku`, or `wiki zen` to search a specific engine.
+- Press `Alt+1` through `Alt+9`, or letter shortcuts like `Alt+G` and `Alt+Y`, to switch between visible search engines.
 - Pick which search engines are visible and choose a default.
+- Drag search engines in settings to reorder the search picker.
+- Add custom search engines with a `{query}` URL template.
+- Navigate the search engine picker with arrow keys, Enter, and Escape.
 - Switch between digital and manual clock styles.
-- Show current weather through Open-Meteo, with no API key required.
+- Choose a quiet background theme.
+- Show current weather and condition through Open-Meteo, with no API key required.
 - Add, edit, and remove quick links from the settings panel.
+- Drag quick links in settings to reorder them.
 - Install metadata through `manifest.json`.
 - Local SVG icons under `assets/`.
 
@@ -42,10 +49,14 @@ All configuration lives in browser storage under `haku.settings.v3`.
 Use the settings button in the top-right corner to edit:
 
 - search engines
+- custom search engines
 - default search engine
 - clock style
+- background theme
 - weather city and units
 - quick links
+
+Reset asks for confirmation before clearing browser-stored settings.
 
 If no weather city is saved, Haku uses the browser timezone as a first guess.
 

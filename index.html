@@ -40,7 +40,53 @@
       --surface: rgba(251, 252, 248, 0.74);
       --surface-solid: #fbfcf8;
       --shadow: 0 24px 80px rgba(35, 47, 37, 0.10);
+      --attention: #8a7f5d;
+      --attention-soft: rgba(138, 127, 93, 0.14);
+      --danger: #9f4b3f;
+      --danger-soft: rgba(159, 75, 63, 0.10);
       --radius: 8px;
+    }
+
+    body[data-theme="paper"] {
+      --paper: #f7f6f1;
+      --paper-deep: #ecebe3;
+      --ink: #24231e;
+      --muted: #706f66;
+      --line: rgba(36, 35, 30, 0.14);
+      --line-strong: rgba(36, 35, 30, 0.28);
+      --surface: rgba(253, 252, 247, 0.74);
+      --surface-solid: #fdfcf7;
+      --shadow: 0 24px 80px rgba(46, 44, 34, 0.10);
+      --attention: #817654;
+      --attention-soft: rgba(129, 118, 84, 0.14);
+    }
+
+    body[data-theme="stone"] {
+      --paper: #f2f3f1;
+      --paper-deep: #e1e4e1;
+      --ink: #222624;
+      --muted: #69716d;
+      --line: rgba(34, 38, 36, 0.14);
+      --line-strong: rgba(34, 38, 36, 0.28);
+      --surface: rgba(250, 251, 249, 0.74);
+      --surface-solid: #fafbf9;
+      --shadow: 0 24px 80px rgba(38, 42, 39, 0.10);
+      --attention: #727d70;
+      --attention-soft: rgba(114, 125, 112, 0.14);
+    }
+
+    body[data-theme="dawn"] {
+      --paper: #f7f4f2;
+      --paper-deep: #eadfd8;
+      --ink: #29221f;
+      --muted: #766a64;
+      --line: rgba(41, 34, 31, 0.14);
+      --line-strong: rgba(41, 34, 31, 0.28);
+      --surface: rgba(255, 252, 249, 0.74);
+      --surface-solid: #fffcf9;
+      --shadow: 0 24px 80px rgba(50, 38, 32, 0.10);
+      --attention: #8f7866;
+      --attention-soft: rgba(143, 120, 102, 0.14);
     }
 
     * {
@@ -221,16 +267,6 @@
       opacity: 0.5;
     }
 
-    .clock-number {
-      fill: rgba(31, 36, 31, 0.62);
-      font-size: 15px;
-      font-weight: 560;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      font-variant-numeric: tabular-nums;
-      user-select: none;
-    }
-
     .clock-pin {
       fill: var(--ink);
     }
@@ -353,8 +389,11 @@
     }
 
     .engine-option:hover,
-    .engine-option.is-active {
+    .engine-option.is-active,
+    .engine-option.is-focused,
+    .engine-option:focus {
       background: rgba(31, 36, 31, 0.06);
+      outline: none;
     }
 
     .engine-option span {
@@ -412,6 +451,67 @@
       height: 5px;
       border-radius: 50%;
       background: rgba(31, 36, 31, 0.34);
+    }
+
+    .weather-icon {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid rgba(31, 36, 31, 0.42);
+      border-radius: 50%;
+      display: inline-block;
+      flex: 0 0 auto;
+      position: relative;
+    }
+
+    .weather-icon.cloud {
+      border-radius: 999px;
+      width: 17px;
+      height: 9px;
+      margin-top: 3px;
+    }
+
+    .weather-icon.cloud::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 1.5px solid rgba(31, 36, 31, 0.42);
+      border-bottom: 0;
+      border-radius: 50% 50% 0 0;
+      left: 3px;
+      top: -7px;
+      background: var(--paper);
+    }
+
+    .weather-icon.rain {
+      border-radius: 999px;
+      width: 17px;
+      height: 9px;
+      margin-top: 1px;
+    }
+
+    .weather-icon.rain::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 5px;
+      border-radius: 999px;
+      left: 7px;
+      top: 10px;
+      background: rgba(31, 36, 31, 0.36);
+      box-shadow: -5px -1px 0 rgba(31, 36, 31, 0.28), 5px -1px 0 rgba(31, 36, 31, 0.28);
+    }
+
+    .weather-icon.snow::after {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      left: 4px;
+      top: 15px;
+      background: rgba(31, 36, 31, 0.32);
+      box-shadow: 6px 0 0 rgba(31, 36, 31, 0.26);
     }
 
     .links {
@@ -528,6 +628,13 @@
       border-color: var(--line-strong);
     }
 
+    input:invalid,
+    .field input:invalid,
+    .link-row input:invalid {
+      border-color: var(--attention);
+      box-shadow: 0 0 0 3px var(--attention-soft);
+    }
+
     .engine-settings {
       display: grid;
       gap: 8px;
@@ -536,7 +643,7 @@
     .engine-setting-row,
     .link-row {
       display: grid;
-      grid-template-columns: auto 1fr auto auto;
+      grid-template-columns: auto auto 1fr auto auto;
       align-items: center;
       gap: 10px;
       min-height: 46px;
@@ -544,6 +651,46 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(241, 244, 238, 0.58);
+    }
+
+    .draggable-row {
+      transition: border-color 160ms ease, opacity 160ms ease, background 160ms ease;
+    }
+
+    .draggable-row.is-dragging {
+      opacity: 0.48;
+      border-color: var(--line-strong);
+    }
+
+    .drag-handle {
+      width: 30px;
+      height: 30px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .drag-handle:hover,
+    .drag-handle:focus {
+      border-color: var(--line);
+      background: rgba(251, 252, 248, 0.72);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .drag-handle svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
     }
 
     .engine-name {
@@ -579,7 +726,11 @@
     }
 
     .link-row {
-      grid-template-columns: 1fr 1.5fr auto;
+      grid-template-columns: auto 1fr 1.5fr auto;
+    }
+
+    .custom-engine-row {
+      grid-template-columns: 1fr 1.4fr 0.7fr 0.7fr auto;
     }
 
     .link-row input {
@@ -621,7 +772,12 @@
     }
 
     .danger {
-      color: #73372f;
+      color: var(--danger);
+    }
+
+    .text-button.danger:hover {
+      border-color: rgba(159, 75, 63, 0.32);
+      background: var(--danger-soft);
     }
 
     @media (max-width: 640px) {
@@ -689,6 +845,9 @@
 
       <div class="quiet-row">
         <div class="weather" id="weather" aria-live="polite"></div>
+      </div>
+
+      <div class="quiet-row">
         <nav class="links" id="links" aria-label="Links"></nav>
       </div>
     </section>
@@ -728,8 +887,31 @@
         </section>
 
         <section class="section">
+          <h3 class="section-title">Appearance</h3>
+          <div class="field-grid">
+            <label class="field">
+              Theme
+              <select id="themeMode">
+                <option value="moss">Moss</option>
+                <option value="paper">Paper</option>
+                <option value="stone">Stone</option>
+                <option value="dawn">Dawn</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
           <h3 class="section-title">Search</h3>
           <div class="engine-settings" id="engineSettings"></div>
+          <div class="link-list" id="customEngineList"></div>
+          <div class="link-row custom-engine-row">
+            <input id="customEngineName" type="text" placeholder="Name" aria-label="Custom engine name" />
+            <input id="customEngineUrl" type="url" placeholder="https://example.com/search?q={query}" aria-label="Custom engine URL template" />
+            <input id="customEnginePrefix" type="text" placeholder="prefix" aria-label="Custom engine prefix" />
+            <input id="customEngineShortcut" type="text" maxlength="1" placeholder="key" aria-label="Custom engine shortcut" />
+            <button class="text-button" id="addCustomEngine" type="button">Add</button>
+          </div>
         </section>
 
         <section class="section">
@@ -767,73 +949,109 @@
     const STORAGE_KEY = "haku.settings.v3";
     const LEGACY_STORAGE_KEYS = ["haku.settings.v2", "homepage.settings.v1"];
 
-    const ENGINES = {
+    const THEME_META_COLORS = {
+      moss: "#e6ece4",
+      paper: "#ecebe3",
+      stone: "#e1e4e1",
+      dawn: "#eadfd8"
+    };
+
+    const BUILT_IN_ENGINES = {
       google: {
         name: "Google",
+        aliases: ["g", "google"],
+        shortcut: "g",
         icon: "assets/google.svg",
         url: "https://www.google.com/search?q={query}"
       },
       bing: {
         name: "Bing",
+        aliases: ["b", "bing"],
+        shortcut: "b",
         icon: "assets/bing.svg",
         url: "https://www.bing.com/search?q={query}"
       },
       brave: {
         name: "Brave",
+        aliases: ["br", "brave"],
+        shortcut: "v",
         icon: "assets/brave.svg",
         url: "https://search.brave.com/search?q={query}"
       },
       duckduckgo: {
         name: "DuckDuckGo",
+        aliases: ["d", "ddg", "duck"],
+        shortcut: "d",
         icon: "assets/duckduckgo.svg",
         url: "https://duckduckgo.com/?q={query}"
       },
       ecosia: {
         name: "Ecosia",
+        aliases: ["e", "eco", "ecosia"],
+        shortcut: "e",
         icon: "assets/ecosia.svg",
         url: "https://www.ecosia.org/search?q={query}"
       },
       startpage: {
         name: "Startpage",
+        aliases: ["s", "sp", "start"],
+        shortcut: "s",
         icon: "assets/startpage.svg",
         url: "https://www.startpage.com/sp/search?query={query}"
       },
       kagi: {
         name: "Kagi",
+        aliases: ["k", "kagi"],
+        shortcut: "k",
         icon: "assets/kagi.svg",
         url: "https://kagi.com/search?q={query}"
       },
       yandex: {
         name: "Yandex",
+        aliases: ["y", "ya", "yandex"],
+        shortcut: "x",
         icon: "assets/yandex.svg",
         url: "https://yandex.com/search/?text={query}"
       },
       youtube: {
         name: "YouTube",
+        aliases: ["yt", "youtube", "video"],
+        shortcut: "y",
         icon: "assets/youtube.svg",
         url: "https://www.youtube.com/results?search_query={query}"
       },
       reddit: {
         name: "Reddit",
+        aliases: ["r", "reddit"],
+        shortcut: "r",
         icon: "assets/reddit.svg",
         url: "https://www.reddit.com/search/?q={query}"
       },
       wikipedia: {
         name: "Wikipedia",
+        aliases: ["w", "wiki", "wp"],
+        shortcut: "w",
         icon: "assets/wikipedia.svg",
         url: "https://en.wikipedia.org/w/index.php?search={query}"
       },
       github: {
         name: "GitHub",
+        aliases: ["gh", "github", "git"],
+        shortcut: "h",
         icon: "assets/github.svg",
         url: "https://github.com/search?q={query}"
       }
     };
 
+    let ENGINES = { ...BUILT_IN_ENGINES };
+
     const DEFAULT_SETTINGS = {
       activeEngine: "google",
       defaultEngine: "google",
       enabledEngines: ["google", "duckduckgo", "youtube", "reddit"],
+      engineOrder: ["google", "bing", "brave", "duckduckgo", "ecosia", "startpage", "kagi", "yandex", "youtube", "reddit", "wikipedia", "github"],
+      customEngines: [],
+      themeMode: "moss",
       clockMode: "digital",
       timeFormat: "24",
       weatherCity: "",
@@ -847,7 +1065,8 @@
 
     const state = {
       settings: loadSettings(),
-      weatherAbort: null
+      weatherAbort: null,
+      drag: null
     };
 
     const dom = {
@@ -864,9 +1083,16 @@
       settingsDialog: document.getElementById("settingsDialog"),
       clockMode: document.getElementById("clockMode"),
       timeFormat: document.getElementById("timeFormat"),
+      themeMode: document.getElementById("themeMode"),
       engineSettings: document.getElementById("engineSettings"),
       weatherCity: document.getElementById("weatherCity"),
       weatherUnits: document.getElementById("weatherUnits"),
+      customEngineList: document.getElementById("customEngineList"),
+      customEngineName: document.getElementById("customEngineName"),
+      customEngineUrl: document.getElementById("customEngineUrl"),
+      customEnginePrefix: document.getElementById("customEnginePrefix"),
+      customEngineShortcut: document.getElementById("customEngineShortcut"),
+      addCustomEngine: document.getElementById("addCustomEngine"),
       linkList: document.getElementById("linkList"),
       addLink: document.getElementById("addLink"),
       resetSettings: document.getElementById("resetSettings")
@@ -878,9 +1104,13 @@
         if (!raw) return cloneDefaults();
         const parsed = JSON.parse(raw);
         const merged = { ...DEFAULT_SETTINGS, ...parsed };
-        merged.enabledEngines = sanitizeEnabledEngines(merged.enabledEngines);
+        merged.customEngines = sanitizeCustomEngines(merged.customEngines);
+        refreshEngines(merged.customEngines);
+        merged.engineOrder = sanitizeEngineOrder(merged.engineOrder, merged.enabledEngines);
+        merged.enabledEngines = orderEnabledEngines(sanitizeEnabledEngines(merged.enabledEngines), merged.engineOrder);
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
+        merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "moss";
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
         merged.links = sanitizeLinks(merged.links);
@@ -891,6 +1121,7 @@
     }
 
     function cloneDefaults() {
+      refreshEngines([]);
       return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
     }
 
@@ -898,9 +1129,73 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
     }
 
+    function refreshEngines(customEngines = state.settings?.customEngines || []) {
+      ENGINES = { ...BUILT_IN_ENGINES };
+      sanitizeCustomEngines(customEngines).forEach((engine) => {
+        ENGINES[engine.id] = {
+          name: engine.name,
+          aliases: engine.aliases,
+          shortcut: engine.shortcut,
+          icon: "favicon.svg",
+          url: engine.url,
+          custom: true
+        };
+      });
+    }
+
+    function sanitizeCustomEngines(value) {
+      if (!Array.isArray(value)) return [];
+      const usedIds = new Set(Object.keys(BUILT_IN_ENGINES));
+      return value
+        .map((engine) => {
+          const name = String(engine.name || "").trim().slice(0, 32);
+          const url = String(engine.url || "").trim();
+          if (!name || !isSafeSearchUrl(url)) return null;
+
+          const baseId = String(engine.id || "").startsWith("custom-") ? slugify(engine.id) : `custom-${slugify(name)}`;
+          let id = baseId;
+          let suffix = 2;
+          while (usedIds.has(id)) {
+            id = `${baseId}-${suffix}`;
+            suffix += 1;
+          }
+          usedIds.add(id);
+
+          const prefix = String(engine.prefix || engine.aliases?.[0] || "").trim().toLowerCase().replace(/^!/, "");
+          const aliases = Array.from(new Set([prefix, slugify(name)].filter(Boolean)));
+          const shortcut = String(engine.shortcut || "").trim().toLowerCase().match(/^[a-z0-9]$/)?.[0] || "";
+
+          return { id, name, url, prefix, aliases, shortcut };
+        })
+        .filter(Boolean);
+    }
+
+    function slugify(value) {
+      return String(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+
+    function isSafeSearchUrl(value) {
+      if (!value.includes("{query}")) return false;
+      return isSafeUrl(value.replace("{query}", "test"));
+    }
+
     function sanitizeEnabledEngines(value) {
       const list = Array.isArray(value) ? value.filter((key) => ENGINES[key]) : [];
       return list.length ? Array.from(new Set(list)) : ["google"];
+    }
+
+    function sanitizeEngineOrder(value, preferred = []) {
+      const order = [];
+      const source = Array.isArray(value) && value.length ? value : preferred;
+      [...source, ...Object.keys(ENGINES)].forEach((key) => {
+        if (ENGINES[key] && !order.includes(key)) order.push(key);
+      });
+      return order;
+    }
+
+    function orderEnabledEngines(enabled, order) {
+      const enabledSet = new Set(sanitizeEnabledEngines(enabled));
+      return sanitizeEngineOrder(order).filter((key) => enabledSet.has(key));
     }
 
     function sanitizeLinks(value) {
@@ -924,7 +1219,11 @@
 
     function updateSettings(next) {
       state.settings = { ...state.settings, ...next };
-      state.settings.enabledEngines = sanitizeEnabledEngines(state.settings.enabledEngines);
+      state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
+      refreshEngines(state.settings.customEngines);
+      state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "moss";
+      state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
+      state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
       if (!state.settings.enabledEngines.includes(state.settings.defaultEngine)) {
         state.settings.defaultEngine = state.settings.enabledEngines[0];
       }
@@ -936,10 +1235,17 @@
     }
 
     function render() {
+      applyTheme();
       renderClock();
       renderEngines();
       renderLinks();
       renderSettings();
+    }
+
+    function applyTheme() {
+      const theme = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "moss";
+      document.body.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_META_COLORS[theme]);
     }
 
     function renderClock() {
@@ -958,14 +1264,10 @@
 
     function renderManualClock() {
       return `
-          <svg class="analog-clock" viewBox="0 0 200 200" aria-labelledby="manualClockTitle" role="img">
+        <svg class="analog-clock" viewBox="0 0 200 200" aria-labelledby="manualClockTitle" role="img">
           <title id="manualClockTitle">Manual clock</title>
           <circle class="clock-face" cx="100" cy="100" r="94" />
           ${renderClockTicks()}
-          <text class="clock-number" x="100" y="38">12</text>
-          <text class="clock-number" x="162" y="101">3</text>
-          <text class="clock-number" x="100" y="164">6</text>
-          <text class="clock-number" x="38" y="101">9</text>
           <line class="hand hand-tail hour" id="hourTail" x1="100" y1="100" x2="100" y2="113" />
           <line class="hand hour" id="hourHand" x1="100" y1="100" x2="100" y2="62" />
           <line class="hand hand-tail minute" id="minuteTail" x1="100" y1="100" x2="100" y2="118" />
@@ -1050,11 +1352,14 @@
       dom.enginePickerIcon.src = activeEngine.icon;
       dom.enginePickerButton.title = activeEngine.name;
       dom.enginePickerButton.setAttribute("aria-label", `Search with ${activeEngine.name}`);
-      dom.engineMenu.innerHTML = state.settings.enabledEngines.map((key) => {
+      dom.engineMenu.innerHTML = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder).map((key, index) => {
         const engine = ENGINES[key];
         const selected = key === active ? " is-active" : "";
+        const shortcuts = [];
+        if (index < 9) shortcuts.push(`Alt+${index + 1}`);
+        if (engine.shortcut) shortcuts.push(`Alt+${engine.shortcut.toUpperCase()}`);
         return `
-          <button class="engine-option${selected}" type="button" role="option" data-engine="${key}" aria-selected="${key === active}">
+          <button class="engine-option${selected}" type="button" role="option" data-engine="${key}" aria-selected="${key === active}" title="${shortcuts.join(" / ")}">
             <img src="${engine.icon}" alt="" />
             <span>${engine.name}</span>
           </button>
@@ -1070,20 +1375,31 @@
     function renderSettings() {
       dom.clockMode.value = state.settings.clockMode;
       dom.timeFormat.value = state.settings.timeFormat;
+      dom.themeMode.value = state.settings.themeMode;
       dom.weatherCity.value = state.settings.weatherCity;
       dom.weatherUnits.value = state.settings.weatherUnits;
 
-      dom.engineSettings.innerHTML = Object.entries(ENGINES).map(([key, engine]) => {
+      dom.engineSettings.innerHTML = sanitizeEngineOrder(state.settings.engineOrder).map((key) => {
+        const engine = ENGINES[key];
         const enabled = state.settings.enabledEngines.includes(key);
         const checked = enabled ? "checked" : "";
         const defaulted = state.settings.defaultEngine === key ? "checked" : "";
         const disabled = enabled ? "" : "disabled";
         return `
-          <div class="engine-setting-row">
+          <div class="engine-setting-row draggable-row" data-engine-row="${key}">
+            <button class="drag-handle" type="button" draggable="true" data-drag-type="engine" data-drag-key="${key}" aria-label="Move ${engine.name}" title="Drag to reorder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M8 8h10" />
+                <path d="M8 12h10" />
+                <path d="M8 16h10" />
+                <path d="m4.5 9.5 2-2 2 2" />
+                <path d="m4.5 14.5 2 2 2-2" />
+              </svg>
+            </button>
             <label class="engine-name">
               <input class="check" type="checkbox" data-engine-enabled="${key}" ${checked} />
               <img src="${engine.icon}" alt="" />
-              ${engine.name}
+              ${escapeHtml(engine.name)}
             </label>
             <span></span>
             <span class="mini-label">Default</span>
@@ -1092,8 +1408,32 @@
         `;
       }).join("");
 
+      dom.customEngineList.innerHTML = state.settings.customEngines.map((engine) => `
+        <div class="link-row custom-engine-row">
+          <input type="text" value="${escapeAttribute(engine.name)}" aria-label="Custom engine name" disabled />
+          <input type="url" value="${escapeAttribute(engine.url)}" aria-label="Custom engine URL" disabled />
+          <input type="text" value="${escapeAttribute(engine.prefix || "")}" aria-label="Custom engine prefix" disabled />
+          <input type="text" value="${escapeAttribute(engine.shortcut || "")}" aria-label="Custom engine shortcut" disabled />
+          <button class="icon-button" type="button" data-remove-custom-engine="${engine.id}" aria-label="Remove custom engine" title="Remove">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+      `).join("");
+
       dom.linkList.innerHTML = state.settings.links.map((link, index) => `
-        <div class="link-row">
+        <div class="link-row draggable-row" data-link-row="${index}">
+          <button class="drag-handle" type="button" draggable="true" data-drag-type="link" data-drag-index="${index}" aria-label="Move link" title="Drag to reorder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M8 8h10" />
+              <path d="M8 12h10" />
+              <path d="M8 16h10" />
+              <path d="m4.5 9.5 2-2 2 2" />
+              <path d="m4.5 14.5 2 2 2-2" />
+            </svg>
+          </button>
           <input type="text" value="${escapeAttribute(link.name)}" data-link-name="${index}" aria-label="Link name" />
           <input type="url" value="${escapeAttribute(link.url)}" data-link-url="${index}" aria-label="Link URL" />
           <button class="icon-button" type="button" data-remove-link="${index}" aria-label="Remove link" title="Remove">
@@ -1138,15 +1478,27 @@
         const weather = await weatherResponse.json();
         const unit = state.settings.weatherUnits === "fahrenheit" ? "F" : "C";
         const temperature = Math.round(weather.current.temperature_2m);
+        const condition = weatherCondition(weather.current.weather_code);
 
         dom.weather.innerHTML = `
-          <span class="weather-dot"></span>
-          <span><strong>${temperature}&deg;${unit}</strong> ${escapeHtml(place.name)}</span>
+          <span class="weather-icon ${condition.icon}"></span>
+          <span><strong>${temperature}&deg;${unit}</strong> ${escapeHtml(place.name)} - ${condition.label}</span>
         `;
       } catch (error) {
         if (error.name === "AbortError") return;
         dom.weather.innerHTML = `<span class="weather-dot"></span><span>${escapeHtml(city)}</span>`;
       }
+    }
+
+    function weatherCondition(code) {
+      if ([0].includes(code)) return { icon: "clear", label: "Clear" };
+      if ([1, 2].includes(code)) return { icon: "clear", label: "Partly cloudy" };
+      if ([3, 45, 48].includes(code)) return { icon: "cloud", label: code === 3 ? "Cloudy" : "Fog" };
+      if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99].includes(code)) {
+        return { icon: "rain", label: [95, 96, 99].includes(code) ? "Storm" : "Rain" };
+      }
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return { icon: "snow", label: "Snow" };
+      return { icon: "cloud", label: "Weather" };
     }
 
     function getWeatherCity() {
@@ -1159,10 +1511,31 @@
     }
 
     function search(query) {
-      const key = state.settings.activeEngine;
-      const engine = ENGINES[key] || ENGINES.google;
-      const encoded = encodeURIComponent(query);
+      const resolved = resolveSearch(query);
+      const engine = ENGINES[resolved.engineKey] || ENGINES.google;
+      const encoded = encodeURIComponent(resolved.query);
       window.location.href = engine.url.replace("{query}", encoded);
+    }
+
+    function resolveSearch(query) {
+      const parts = query.trim().split(/\s+/);
+      const prefix = parts[0]?.replace(/^!/, "").toLowerCase();
+      const engineKey = Object.keys(ENGINES).find((key) => {
+        const aliases = ENGINES[key].aliases || [];
+        return key === prefix || aliases.includes(prefix);
+      });
+
+      if (engineKey && parts.length > 1) {
+        return {
+          engineKey,
+          query: parts.slice(1).join(" ")
+        };
+      }
+
+      return {
+        engineKey: state.settings.activeEngine,
+        query
+      };
     }
 
     function escapeHtml(value) {
@@ -1176,7 +1549,126 @@
     }
 
     function escapeAttribute(value) {
-      return escapeHtml(value).replace(/`/g, "&#096;");
+      return escapeHtml(value).replaceAll(/`/g, "&#096;");
+    }
+
+    function moveItem(list, fromIndex, toIndex) {
+      const next = [...list];
+      const [item] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, item);
+      return next;
+    }
+
+    function startDrag(event) {
+      const handle = event.target.closest("[data-drag-type]");
+      if (!handle) return;
+
+      state.drag = {
+        type: handle.dataset.dragType,
+        key: handle.dataset.dragKey,
+        index: handle.dataset.dragIndex === undefined ? undefined : Number(handle.dataset.dragIndex)
+      };
+      handle.closest(".draggable-row")?.classList.add("is-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", state.drag.key || String(state.drag.index));
+    }
+
+    function allowDrop(event) {
+      if (!state.drag) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    }
+
+    function endDrag() {
+      document.querySelectorAll(".draggable-row.is-dragging").forEach((row) => row.classList.remove("is-dragging"));
+      state.drag = null;
+    }
+
+    function dropEngine(event) {
+      if (!state.drag || state.drag.type !== "engine") return;
+      event.preventDefault();
+
+      const targetKey = event.target.closest("[data-engine-row]")?.dataset.engineRow;
+      const sourceKey = state.drag.key;
+      if (!targetKey || !sourceKey || targetKey === sourceKey) return endDrag();
+
+      const order = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
+      const fromIndex = order.indexOf(sourceKey);
+      const toIndex = order.indexOf(targetKey);
+      if (fromIndex === -1 || toIndex === -1) return endDrag();
+
+      updateSettings({ engineOrder: moveItem(order, fromIndex, toIndex) });
+      endDrag();
+    }
+
+    function dropLink(event) {
+      if (!state.drag || state.drag.type !== "link") return;
+      event.preventDefault();
+
+      const targetIndex = Number(event.target.closest("[data-link-row]")?.dataset.linkRow);
+      const sourceIndex = state.drag.index;
+      if (!Number.isInteger(targetIndex) || !Number.isInteger(sourceIndex) || targetIndex === sourceIndex) return endDrag();
+
+      updateSettings({ links: moveItem(state.settings.links, sourceIndex, targetIndex) });
+      endDrag();
+    }
+
+    function selectEngineShortcut(index) {
+      const engines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
+      const key = engines[index];
+      if (!key) return false;
+      updateSettings({ activeEngine: key });
+      dom.searchInput.focus();
+      return true;
+    }
+
+    function selectEngineLetterShortcut(letter) {
+      const normalized = letter.toLowerCase();
+      const engines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
+      const key = engines.find((engineKey) => ENGINES[engineKey].shortcut === normalized);
+      if (!key) return false;
+      updateSettings({ activeEngine: key });
+      dom.searchInput.focus();
+      return true;
+    }
+
+    function addCustomEngine() {
+      const engine = sanitizeCustomEngines([{
+        name: dom.customEngineName.value,
+        url: dom.customEngineUrl.value,
+        prefix: dom.customEnginePrefix.value,
+        shortcut: dom.customEngineShortcut.value
+      }])[0];
+
+      if (!engine) {
+        window.alert("Custom search engines need a name and a safe URL template containing {query}.");
+        return;
+      }
+
+      const customEngines = sanitizeCustomEngines([...state.settings.customEngines, engine]);
+      const addedEngine = customEngines[customEngines.length - 1];
+      const engineOrder = [...state.settings.engineOrder, addedEngine.id];
+      const enabledEngines = [...state.settings.enabledEngines, addedEngine.id];
+      updateSettings({ customEngines, engineOrder, enabledEngines, activeEngine: addedEngine.id, defaultEngine: addedEngine.id });
+      dom.customEngineName.value = "";
+      dom.customEngineUrl.value = "";
+      dom.customEnginePrefix.value = "";
+      dom.customEngineShortcut.value = "";
+    }
+
+    function removeCustomEngine(id) {
+      const customEngines = state.settings.customEngines.filter((engine) => engine.id !== id);
+      const engineOrder = state.settings.engineOrder.filter((key) => key !== id);
+      const enabledEngines = state.settings.enabledEngines.filter((key) => key !== id);
+      const nextDefault = state.settings.defaultEngine === id ? enabledEngines[0] || "google" : state.settings.defaultEngine;
+      const nextActive = state.settings.activeEngine === id ? nextDefault : state.settings.activeEngine;
+      updateSettings({
+        customEngines,
+        engineOrder,
+        enabledEngines: enabledEngines.length ? enabledEngines : ["google"],
+        defaultEngine: nextDefault,
+        activeEngine: nextActive
+      });
     }
 
     dom.searchForm.addEventListener("submit", (event) => {
@@ -1188,10 +1680,56 @@
     function setEngineMenuOpen(open) {
       dom.engineMenu.hidden = !open;
       dom.enginePickerButton.setAttribute("aria-expanded", String(open));
+      if (open) {
+        requestAnimationFrame(() => focusEngineOption(activeEngineIndex()));
+      }
+    }
+
+    function engineOptionButtons() {
+      return Array.from(dom.engineMenu.querySelectorAll("[data-engine]"));
+    }
+
+    function activeEngineIndex() {
+      const buttons = engineOptionButtons();
+      const activeIndex = buttons.findIndex((button) => button.dataset.engine === state.settings.activeEngine);
+      return activeIndex === -1 ? 0 : activeIndex;
+    }
+
+    function focusEngineOption(index) {
+      const buttons = engineOptionButtons();
+      if (!buttons.length) return;
+      const normalized = (index + buttons.length) % buttons.length;
+      buttons.forEach((button) => button.classList.remove("is-focused"));
+      buttons[normalized].classList.add("is-focused");
+      buttons[normalized].focus();
+    }
+
+    function moveEngineFocus(delta) {
+      const buttons = engineOptionButtons();
+      if (!buttons.length) return;
+      const currentIndex = buttons.indexOf(document.activeElement);
+      focusEngineOption((currentIndex === -1 ? activeEngineIndex() : currentIndex) + delta);
+    }
+
+    function selectFocusedEngine() {
+      const button = document.activeElement?.closest?.("[data-engine]");
+      if (!button || dom.engineMenu.hidden) return false;
+      updateSettings({ activeEngine: button.dataset.engine });
+      setEngineMenuOpen(false);
+      dom.searchInput.focus();
+      return true;
     }
 
     dom.enginePickerButton.addEventListener("click", () => {
       setEngineMenuOpen(dom.enginePickerButton.getAttribute("aria-expanded") !== "true");
+    });
+
+    dom.enginePickerButton.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        event.stopPropagation();
+        setEngineMenuOpen(true);
+      }
     });
 
     dom.engineMenu.addEventListener("click", (event) => {
@@ -1217,6 +1755,7 @@
 
     dom.clockMode.addEventListener("change", () => updateSettings({ clockMode: dom.clockMode.value }));
     dom.timeFormat.addEventListener("change", () => updateSettings({ timeFormat: dom.timeFormat.value }));
+    dom.themeMode.addEventListener("change", () => updateSettings({ themeMode: dom.themeMode.value }));
     dom.weatherUnits.addEventListener("change", () => {
       updateSettings({ weatherUnits: dom.weatherUnits.value });
       updateWeather();
@@ -1245,6 +1784,17 @@
       }
     });
 
+    dom.engineSettings.addEventListener("dragstart", startDrag);
+    dom.engineSettings.addEventListener("dragover", allowDrop);
+    dom.engineSettings.addEventListener("drop", dropEngine);
+    dom.engineSettings.addEventListener("dragend", endDrag);
+
+    dom.addCustomEngine.addEventListener("click", addCustomEngine);
+    dom.customEngineList.addEventListener("click", (event) => {
+      const id = event.target.closest("[data-remove-custom-engine]")?.dataset.removeCustomEngine;
+      if (id) removeCustomEngine(id);
+    });
+
     dom.linkList.addEventListener("input", (event) => {
       const nameIndex = event.target.dataset.linkName;
       const urlIndex = event.target.dataset.linkUrl;
@@ -1265,12 +1815,19 @@
       updateSettings({ links });
     });
 
+    dom.linkList.addEventListener("dragstart", startDrag);
+    dom.linkList.addEventListener("dragover", allowDrop);
+    dom.linkList.addEventListener("drop", dropLink);
+    dom.linkList.addEventListener("dragend", endDrag);
+
     dom.addLink.addEventListener("click", () => {
       const links = [...state.settings.links, { name: "New", url: "https://" }];
       updateSettings({ links });
     });
 
     dom.resetSettings.addEventListener("click", () => {
+      const confirmed = window.confirm("Reset all Haku settings? This removes custom engines, links, theme, weather, and search preferences from this browser.");
+      if (!confirmed) return;
       state.settings = cloneDefaults();
       saveSettings();
       render();
@@ -1280,6 +1837,28 @@
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         setEngineMenuOpen(false);
+      }
+
+      if (!dom.engineMenu.hidden && ["ArrowDown", "ArrowUp", "Home", "End", "Enter"].includes(event.key)) {
+        event.preventDefault();
+        if (event.key === "ArrowDown") moveEngineFocus(1);
+        if (event.key === "ArrowUp") moveEngineFocus(-1);
+        if (event.key === "Home") focusEngineOption(0);
+        if (event.key === "End") focusEngineOption(engineOptionButtons().length - 1);
+        if (event.key === "Enter") selectFocusedEngine();
+        return;
+      }
+
+      if (event.altKey && !event.ctrlKey && !event.metaKey && /^[1-9]$/.test(event.key) && !dom.settingsDialog.open) {
+        if (selectEngineShortcut(Number(event.key) - 1)) {
+          event.preventDefault();
+        }
+      }
+
+      if (event.altKey && !event.ctrlKey && !event.metaKey && /^[a-z]$/i.test(event.key) && !dom.settingsDialog.open) {
+        if (selectEngineLetterShortcut(event.key)) {
+          event.preventDefault();
+        }
       }
 
       if (event.key === "/" && document.activeElement !== dom.searchInput && !dom.settingsDialog.open) {
