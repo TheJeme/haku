@@ -349,6 +349,56 @@
       color: var(--muted);
     }
 
+    .suggestion-menu {
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 2px;
+    }
+
+    .suggestion-menu[hidden] {
+      display: none;
+    }
+
+    .suggestion-option {
+      width: 100%;
+      min-height: 40px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .suggestion-option:hover,
+    .suggestion-option.is-active,
+    .suggestion-option:focus {
+      background: var(--surface-soft);
+      outline: none;
+    }
+
+    .suggestion-option span:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .suggestion-source {
+      color: var(--muted);
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+
     .engine-picker {
       position: absolute;
       left: 8px;
@@ -633,26 +683,41 @@
 
     .shortcut-list {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      gap: 10px;
     }
 
-    .shortcut-item {
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 8px 10px;
+    .shortcut-group {
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--surface-row);
+      overflow: hidden;
+    }
+
+    .shortcut-group-title {
+      margin: 0;
+      padding: 9px 10px 7px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 680;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .shortcut-item {
+      min-height: 38px;
+      display: grid;
+      grid-template-columns: 104px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 10px;
+      border-top: 1px solid var(--line);
       color: var(--muted);
       font-size: 0.82rem;
     }
 
     .shortcut-item kbd {
-      min-width: 34px;
+      width: fit-content;
+      max-width: 100%;
       padding: 4px 8px;
       border: 1px solid var(--line);
       border-radius: 999px;
@@ -889,10 +954,14 @@
       }
 
       .field-grid,
-      .shortcut-list,
       .engine-setting-row,
       .link-row {
         grid-template-columns: 1fr;
+      }
+
+      .shortcut-item {
+        grid-template-columns: 1fr;
+        gap: 6px;
       }
 
       .engine-setting-row {
@@ -927,7 +996,7 @@
             </button>
             <div class="engine-menu" id="engineMenu" role="listbox" aria-label="Search engines" hidden></div>
           </div>
-          <input class="search-input" id="searchInput" type="search" placeholder="Search" autocomplete="off" spellcheck="false" autofocus />
+          <input class="search-input" id="searchInput" type="search" placeholder="Search" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="suggestionMenu" aria-expanded="false" autofocus />
           <button class="submit-button" type="submit" aria-label="Search" title="Search">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
               <path d="M5 12h14" />
@@ -935,6 +1004,7 @@
             </svg>
           </button>
         </form>
+        <div class="suggestion-menu" id="suggestionMenu" role="listbox" aria-label="Search suggestions" hidden></div>
       </section>
 
       <div class="quiet-row" id="weatherRow">
@@ -966,6 +1036,7 @@
             <label class="field">
               Mode
               <select id="clockMode">
+                <option value="none">None</option>
                 <option value="digital">Digital</option>
                 <option value="analog">Manual</option>
               </select>
@@ -998,6 +1069,15 @@
 
         <section class="section">
           <h3 class="section-title">Search</h3>
+          <div class="field-grid">
+            <label class="field">
+              Suggestions
+              <select id="suggestionsEnabled">
+                <option value="true">Online</option>
+                <option value="false">Hidden</option>
+              </select>
+            </label>
+          </div>
           <div class="engine-settings" id="engineSettings"></div>
           <div class="link-list" id="customEngineList"></div>
           <div class="link-row custom-engine-row">
@@ -1168,6 +1248,7 @@
       themeMode: "ink",
       clockMode: "digital",
       timeFormat: "24",
+      suggestionsEnabled: true,
       weatherEnabled: true,
       weatherCity: "",
       weatherUnits: "celsius",
@@ -1177,6 +1258,12 @@
     const state = {
       settings: loadSettings(),
       weatherAbort: null,
+      suggestAbort: null,
+      suggestTimer: null,
+      suggestions: [],
+      suggestionContext: null,
+      suggestionIndex: -1,
+      suggestRequestId: 0,
       drag: null
     };
 
@@ -1188,6 +1275,7 @@
       engineMenu: document.getElementById("engineMenu"),
       searchForm: document.getElementById("searchForm"),
       searchInput: document.getElementById("searchInput"),
+      suggestionMenu: document.getElementById("suggestionMenu"),
       weatherRow: document.getElementById("weatherRow"),
       weather: document.getElementById("weather"),
       links: document.getElementById("links"),
@@ -1196,6 +1284,7 @@
       clockMode: document.getElementById("clockMode"),
       timeFormat: document.getElementById("timeFormat"),
       themeMode: document.getElementById("themeMode"),
+      suggestionsEnabled: document.getElementById("suggestionsEnabled"),
       engineSettings: document.getElementById("engineSettings"),
       weatherEnabled: document.getElementById("weatherEnabled"),
       weatherCity: document.getElementById("weatherCity"),
@@ -1226,6 +1315,7 @@
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
         merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
+        merged.suggestionsEnabled = merged.suggestionsEnabled !== false;
         merged.weatherEnabled = merged.weatherEnabled !== false;
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
@@ -1345,6 +1435,7 @@
       state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
       refreshEngines(state.settings.customEngines);
       state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
+      state.settings.suggestionsEnabled = state.settings.suggestionsEnabled !== false;
       state.settings.weatherEnabled = state.settings.weatherEnabled !== false;
       state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
       state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
@@ -1374,7 +1465,10 @@
     }
 
     function renderClock() {
-      if (state.settings.clockMode === "analog") {
+      if (state.settings.clockMode === "none") {
+        dom.clockZone.innerHTML = "";
+        return;
+      } else if (state.settings.clockMode === "analog") {
         dom.clockZone.innerHTML = renderManualClock();
       } else {
         dom.clockZone.innerHTML = `
@@ -1423,6 +1517,7 @@
     }
 
     function updateClock() {
+      if (state.settings.clockMode === "none") return;
       const now = new Date();
 
       if (state.settings.clockMode === "analog") {
@@ -1497,28 +1592,8 @@
       dom.links.innerHTML = links.map((link) => `<a href="${escapeAttribute(link.url)}">${escapeHtml(link.name)}</a>`).join("");
     }
 
-    function renderShortcutHelp() {
-      const engines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
-      const slashShortcuts = engines
-        .map((key) => {
-          const engine = ENGINES[key];
-          const alias = engine.aliases?.[0] || key;
-          return { keys: `/${alias}`, label: engine.name };
-        })
-        .slice(0, 8);
-      const letterShortcuts = engines
-        .filter((key) => ENGINES[key].shortcut)
-        .map((key) => ({ keys: `Alt+${ENGINES[key].shortcut.toUpperCase()}`, label: ENGINES[key].name }))
-        .slice(0, 8);
-      const items = [
-        { keys: "/", label: "Focus search" },
-        { keys: "Alt+1-9", label: "Pick by order" },
-        { keys: "Esc", label: "Close picker" },
-        ...letterShortcuts,
-        ...slashShortcuts
-      ];
-
-      dom.shortcutList.innerHTML = items.map((item) => `
+    function shortcutRows(items) {
+      return items.map((item) => `
         <div class="shortcut-item">
           <kbd>${escapeHtml(item.keys)}</kbd>
           <span>${escapeHtml(item.label)}</span>
@@ -1526,10 +1601,50 @@
       `).join("");
     }
 
+    function shortcutGroup(title, items) {
+      if (!items.length) return "";
+      return `
+        <div class="shortcut-group">
+          <h4 class="shortcut-group-title">${escapeHtml(title)}</h4>
+          ${shortcutRows(items)}
+        </div>
+      `;
+    }
+
+    function renderShortcutHelp() {
+      const engines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
+      const slashShortcuts = engines
+        .map((key) => {
+          const engine = ENGINES[key];
+          const alias = engine.aliases?.[0] || key;
+          return { keys: `/${alias} query`, label: engine.name };
+        })
+        .slice(0, 10);
+      const letterShortcuts = engines
+        .filter((key) => ENGINES[key].shortcut)
+        .map((key) => ({ keys: `Alt+${ENGINES[key].shortcut.toUpperCase()}`, label: ENGINES[key].name }))
+        .slice(0, 10);
+
+      dom.shortcutList.innerHTML = [
+        shortcutGroup("Search", [
+          { keys: "/", label: "Focus search" },
+          { keys: "Up / Down", label: "Move suggestion" },
+          { keys: "Enter", label: "Search selected text" },
+          { keys: "Esc", label: "Close menus" }
+        ]),
+        shortcutGroup("Engines", [
+          { keys: "Alt+1-9", label: "Pick by order" },
+          ...letterShortcuts
+        ]),
+        shortcutGroup("Prefixes", slashShortcuts)
+      ].join("");
+    }
+
     function renderSettings() {
       dom.clockMode.value = state.settings.clockMode;
       dom.timeFormat.value = state.settings.timeFormat;
       dom.themeMode.value = state.settings.themeMode;
+      dom.suggestionsEnabled.value = String(state.settings.suggestionsEnabled);
       dom.weatherEnabled.value = String(state.settings.weatherEnabled);
       dom.weatherCity.value = state.settings.weatherCity;
       dom.weatherUnits.value = state.settings.weatherUnits;
@@ -1709,6 +1824,165 @@
       };
     }
 
+    function suggestionContextForInput(value) {
+      const trimmed = value.trim();
+      if (!trimmed) return null;
+
+      const parts = trimmed.split(/\s+/);
+      const prefixToken = parts[0] || "";
+      if (prefixToken.startsWith("/") && prefixToken.length > 1) {
+        const prefix = prefixToken.slice(1).toLowerCase();
+        const engineKey = Object.keys(ENGINES).find((key) => {
+          const aliases = ENGINES[key].aliases || [];
+          return key === prefix || aliases.includes(prefix);
+        });
+        const query = parts.slice(1).join(" ").trim();
+        return engineKey && query.length >= 2 ? { engineKey, prefixToken, query } : null;
+      }
+
+      return trimmed.length >= 2 ? { engineKey: state.settings.activeEngine, prefixToken: "", query: trimmed } : null;
+    }
+
+    function duckDuckGoSuggestionProvider(engineKey) {
+      return {
+        name: ENGINES[engineKey]?.name || "DuckDuckGo",
+        url: (query) => `https://duckduckgo.com/ac/?q=${encodeURIComponent(query)}&type=list`,
+        parse: (data) => Array.isArray(data) ? data.map((item) => item.phrase || item).filter(Boolean) : []
+      };
+    }
+
+    function suggestionProviders(engineKey) {
+      const fallback = duckDuckGoSuggestionProvider(engineKey);
+      if (engineKey === "google") {
+        return [{
+          name: "Google",
+          url: (query) => `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`,
+          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
+        }, fallback];
+      }
+      if (engineKey === "youtube") {
+        return [{
+          name: "YouTube",
+          url: (query) => `https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(query)}`,
+          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
+        }, fallback];
+      }
+      if (engineKey === "bing") {
+        return [{
+          name: "Bing",
+          url: (query) => `https://api.bing.com/osjson.aspx?query=${encodeURIComponent(query)}`,
+          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
+        }, fallback];
+      }
+      if (engineKey === "wikipedia") {
+        return [{
+          name: "Wikipedia",
+          url: (query) => `https://en.wikipedia.org/w/api.php?action=opensearch&namespace=0&limit=8&format=json&origin=*&search=${encodeURIComponent(query)}`,
+          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
+        }, fallback];
+      }
+
+      return [fallback];
+    }
+
+    function scheduleSuggestions() {
+      window.clearTimeout(state.suggestTimer);
+      if (!state.settings.suggestionsEnabled) {
+        closeSuggestions();
+        return;
+      }
+      state.suggestTimer = window.setTimeout(fetchSuggestions, 160);
+    }
+
+    async function fetchSuggestions() {
+      const context = suggestionContextForInput(dom.searchInput.value);
+      if (!context) {
+        closeSuggestions();
+        return;
+      }
+
+      if (state.suggestAbort) state.suggestAbort.abort();
+      const requestId = state.suggestRequestId + 1;
+      state.suggestRequestId = requestId;
+      state.suggestAbort = new AbortController();
+      for (const provider of suggestionProviders(context.engineKey)) {
+        try {
+          const response = await fetch(provider.url(context.query), { signal: state.suggestAbort.signal });
+          const data = await response.json();
+          if (requestId !== state.suggestRequestId) return;
+          const seen = new Set();
+          const items = provider.parse(data)
+            .map((item) => String(item).trim())
+            .filter((item) => item && item.toLowerCase() !== context.query.toLowerCase())
+            .filter((item) => {
+              const key = item.toLowerCase();
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            })
+            .slice(0, 6);
+
+          if (!items.length) continue;
+          state.suggestions = items;
+          state.suggestionContext = { ...context, providerName: provider.name };
+          state.suggestionIndex = -1;
+          renderSuggestions();
+          return;
+        } catch (error) {
+          if (error.name === "AbortError") return;
+        }
+      }
+
+      closeSuggestions();
+    }
+
+    function renderSuggestions() {
+      if (!state.suggestions.length || document.activeElement !== dom.searchInput) {
+        closeSuggestions();
+        return;
+      }
+
+      dom.searchInput.setAttribute("aria-expanded", "true");
+      dom.suggestionMenu.hidden = false;
+      dom.suggestionMenu.innerHTML = state.suggestions.map((suggestion, index) => `
+        <button class="suggestion-option${index === state.suggestionIndex ? " is-active" : ""}" type="button" role="option" data-suggestion-index="${index}" aria-selected="${index === state.suggestionIndex}">
+          <span>${escapeHtml(displaySuggestion(suggestion))}</span>
+          <span class="suggestion-source">${escapeHtml(state.suggestionContext.providerName)}</span>
+        </button>
+      `).join("");
+    }
+
+    function displaySuggestion(suggestion) {
+      const prefix = state.suggestionContext?.prefixToken;
+      return prefix ? `${prefix} ${suggestion}` : suggestion;
+    }
+
+    function closeSuggestions() {
+      if (state.suggestAbort) state.suggestAbort.abort();
+      state.suggestions = [];
+      state.suggestionContext = null;
+      state.suggestionIndex = -1;
+      dom.suggestionMenu.hidden = true;
+      dom.suggestionMenu.innerHTML = "";
+      dom.searchInput.setAttribute("aria-expanded", "false");
+    }
+
+    function moveSuggestion(delta) {
+      if (!state.suggestions.length || dom.suggestionMenu.hidden) return false;
+      state.suggestionIndex = (state.suggestionIndex + delta + state.suggestions.length) % state.suggestions.length;
+      renderSuggestions();
+      return true;
+    }
+
+    function useSuggestion(index = state.suggestionIndex, shouldSearch = false) {
+      const suggestion = state.suggestions[index];
+      if (!suggestion) return false;
+      dom.searchInput.value = displaySuggestion(suggestion);
+      closeSuggestions();
+      if (shouldSearch) search(dom.searchInput.value.trim());
+      return true;
+    }
+
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, (char) => ({
         "&": "&amp;",
@@ -1849,6 +2123,7 @@
       if (!key) return false;
       updateSettings({ activeEngine: key });
       dom.searchInput.focus();
+      scheduleSuggestions();
       return true;
     }
 
@@ -1859,6 +2134,7 @@
       if (!key) return false;
       updateSettings({ activeEngine: key });
       dom.searchInput.focus();
+      scheduleSuggestions();
       return true;
     }
 
@@ -1903,8 +2179,45 @@
 
     dom.searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      if (state.suggestionIndex >= 0 && useSuggestion(state.suggestionIndex, true)) return;
       const query = dom.searchInput.value.trim();
       if (query) search(query);
+    });
+
+    dom.searchInput.addEventListener("input", scheduleSuggestions);
+    dom.searchInput.addEventListener("focus", scheduleSuggestions);
+    dom.searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" && moveSuggestion(1)) {
+        event.preventDefault();
+      }
+
+      if (event.key === "ArrowUp" && moveSuggestion(-1)) {
+        event.preventDefault();
+      }
+
+      if (event.key === "Enter" && state.suggestionIndex >= 0 && useSuggestion(state.suggestionIndex, true)) {
+        event.preventDefault();
+      }
+
+      if (event.key === "Escape" && !dom.suggestionMenu.hidden) {
+        event.preventDefault();
+        closeSuggestions();
+      }
+    });
+
+    dom.searchInput.addEventListener("blur", () => {
+      window.setTimeout(() => {
+        if (!dom.suggestionMenu.matches(":hover")) closeSuggestions();
+      }, 120);
+    });
+
+    dom.suggestionMenu.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+    });
+
+    dom.suggestionMenu.addEventListener("click", (event) => {
+      const index = Number(event.target.closest("[data-suggestion-index]")?.dataset.suggestionIndex);
+      if (Number.isInteger(index)) useSuggestion(index, true);
     });
 
     function setEngineMenuOpen(open) {
@@ -1947,6 +2260,7 @@
       updateSettings({ activeEngine: button.dataset.engine });
       setEngineMenuOpen(false);
       dom.searchInput.focus();
+      scheduleSuggestions();
       return true;
     }
 
@@ -1968,11 +2282,14 @@
       updateSettings({ activeEngine: button.dataset.engine });
       setEngineMenuOpen(false);
       dom.searchInput.focus();
+      scheduleSuggestions();
     });
 
     document.addEventListener("click", (event) => {
       if (dom.enginePicker.contains(event.target)) return;
       setEngineMenuOpen(false);
+      if (dom.searchForm.contains(event.target) || dom.suggestionMenu.contains(event.target)) return;
+      closeSuggestions();
     });
 
     dom.openSettings.addEventListener("click", () => {
@@ -1986,6 +2303,10 @@
     dom.clockMode.addEventListener("change", () => updateSettings({ clockMode: dom.clockMode.value }));
     dom.timeFormat.addEventListener("change", () => updateSettings({ timeFormat: dom.timeFormat.value }));
     dom.themeMode.addEventListener("change", () => updateSettings({ themeMode: dom.themeMode.value }));
+    dom.suggestionsEnabled.addEventListener("change", () => {
+      updateSettings({ suggestionsEnabled: dom.suggestionsEnabled.value === "true" });
+      scheduleSuggestions();
+    });
     dom.weatherEnabled.addEventListener("change", () => {
       updateSettings({ weatherEnabled: dom.weatherEnabled.value === "true" });
       updateWeather();

@@ -7,6 +7,7 @@ Haku is designed to stay small: no build step, no backend, no account, and no `c
 ## Features
 
 - Search with general engines, media/community search, and developer/reference targets.
+- Show online search suggestions while typing when the active provider allows browser requests.
 - Use slash prefixes such as `/yt cats`, `/gh haku`, or `/wiki zen` to search a specific engine.
 - Press `Alt+1` through `Alt+9`, or letter shortcuts like `Alt+G` and `Alt+Y`, to switch between visible search engines.
 - View active keyboard shortcuts from the settings panel.
@@ -52,6 +53,7 @@ Use the settings button in the top-right corner to edit:
 - search engines
 - custom search engines
 - default search engine
+- online search suggestions
 - clock style
 - background theme
 - weather visibility, city, and units
