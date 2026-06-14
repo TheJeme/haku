@@ -55,6 +55,7 @@ Use the settings button in the top-right corner to edit:
 - default search engine
 - online search suggestions
 - clock style
+- date and time formats
 - background theme
 - weather visibility, city, and units
 - quick links

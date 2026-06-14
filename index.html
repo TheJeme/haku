@@ -1132,6 +1132,17 @@
                 <option value="12">12 hour</option>
               </select>
             </label>
+            <label class="field">
+              Date format
+              <select id="dateFormat">
+                <option value="short-weekday">Mon, Mar 17</option>
+                <option value="long-weekday">Monday, March 17</option>
+                <option value="numeric-us">03/17/2003</option>
+                <option value="numeric-eu">17/03/2003</option>
+                <option value="numeric-dotted">17.3.2003</option>
+                <option value="iso">2003-03-17</option>
+              </select>
+            </label>
           </div>
         </section>
 
@@ -1307,14 +1318,15 @@
     let ENGINES = { ...BUILT_IN_ENGINES };
 
     const DEFAULT_SETTINGS = {
-      activeEngine: "google",
-      defaultEngine: "google",
-      enabledEngines: ["google", "duckduckgo", "youtube", "reddit"],
-      engineOrder: ["google", "bing", "brave", "duckduckgo", "ecosia", "startpage", "kagi", "yandex", "youtube", "reddit", "wikipedia", "github"],
+      activeEngine: "duckduckgo",
+      defaultEngine: "duckduckgo",
+      enabledEngines: ["duckduckgo", "google", "youtube", "reddit"],
+      engineOrder: ["duckduckgo", "google", "bing", "brave", "ecosia", "startpage", "kagi", "yandex", "youtube", "reddit", "wikipedia", "github"],
       customEngines: [],
       themeMode: "ink",
       clockMode: "digital",
       timeFormat: "24",
+      dateFormat: "short-weekday",
       suggestionsEnabled: true,
       suggestionSource: "general",
       weatherEnabled: true,
@@ -1351,6 +1363,7 @@
       settingsDialog: document.getElementById("settingsDialog"),
       clockMode: document.getElementById("clockMode"),
       timeFormat: document.getElementById("timeFormat"),
+      dateFormat: document.getElementById("dateFormat"),
       themeMode: document.getElementById("themeMode"),
       suggestionsEnabled: document.getElementById("suggestionsEnabled"),
       suggestionSource: document.getElementById("suggestionSource"),
@@ -1383,6 +1396,7 @@
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
         merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
+        merged.dateFormat = sanitizeDateFormat(merged.dateFormat);
         merged.suggestionsEnabled = merged.suggestionsEnabled !== false;
         merged.suggestionSource = sanitizeSuggestionSource(merged.suggestionSource);
         merged.weatherEnabled = merged.weatherEnabled !== false;
@@ -1477,6 +1491,10 @@
       return value === "current" ? "current" : "general";
     }
 
+    function sanitizeDateFormat(value) {
+      return ["short-weekday", "long-weekday", "numeric-us", "numeric-eu", "numeric-dotted", "iso"].includes(value) ? value : "short-weekday";
+    }
+
     function sanitizeLinks(value) {
       if (!Array.isArray(value)) return [];
       return value
@@ -1501,6 +1519,7 @@
       state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
       refreshEngines(state.settings.customEngines);
       state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
+      state.settings.dateFormat = sanitizeDateFormat(state.settings.dateFormat);
       state.settings.suggestionsEnabled = state.settings.suggestionsEnabled !== false;
       state.settings.suggestionSource = sanitizeSuggestionSource(state.settings.suggestionSource);
       state.settings.weatherEnabled = state.settings.weatherEnabled !== false;
@@ -1626,11 +1645,32 @@
         minute: "2-digit",
         hour12
       }).format(now);
-      document.getElementById("dateText").textContent = new Intl.DateTimeFormat(undefined, {
+      document.getElementById("dateText").textContent = formatDate(now, state.settings.dateFormat);
+    }
+
+    function formatDate(date, format) {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      if (format === "numeric-us") return `${month}/${day}/${year}`;
+      if (format === "numeric-eu") return `${day}/${month}/${year}`;
+      if (format === "numeric-dotted") return `${date.getDate()}.${date.getMonth() + 1}.${year}`;
+      if (format === "iso") return `${year}-${month}-${day}`;
+
+      if (format === "long-weekday") {
+        return new Intl.DateTimeFormat(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric"
+        }).format(date);
+      }
+
+      return new Intl.DateTimeFormat(undefined, {
         weekday: "short",
         month: "short",
         day: "numeric"
-      }).format(now);
+      }).format(date);
     }
 
     function renderEngines() {
@@ -1710,6 +1750,7 @@
     function renderSettings() {
       dom.clockMode.value = state.settings.clockMode;
       dom.timeFormat.value = state.settings.timeFormat;
+      dom.dateFormat.value = state.settings.dateFormat;
       dom.themeMode.value = state.settings.themeMode;
       dom.suggestionsEnabled.value = String(state.settings.suggestionsEnabled);
       dom.suggestionSource.value = state.settings.suggestionSource;
@@ -2411,6 +2452,7 @@
 
     dom.clockMode.addEventListener("change", () => updateSettings({ clockMode: dom.clockMode.value }));
     dom.timeFormat.addEventListener("change", () => updateSettings({ timeFormat: dom.timeFormat.value }));
+    dom.dateFormat.addEventListener("change", () => updateSettings({ dateFormat: dom.dateFormat.value }));
     dom.themeMode.addEventListener("change", () => updateSettings({ themeMode: dom.themeMode.value }));
     dom.suggestionsEnabled.addEventListener("change", () => {
       updateSettings({ suggestionsEnabled: dom.suggestionsEnabled.value === "true" });
