@@ -68,6 +68,4 @@ If no weather city is saved, Haku uses the browser timezone as a first guess.
 - [index.html](./index.html) contains the app UI, styling, and behavior.
 - [manifest.json](./manifest.json) defines install metadata.
 - [favicon.svg](./favicon.svg) is the compact browser favicon.
-- [assets/app-icon.svg](./assets/app-icon.svg) is the app icon.
-- [assets/mask-icon.svg](./assets/mask-icon.svg) is the maskable icon.
 - `assets/` contains local app and search engine SVG icons.
