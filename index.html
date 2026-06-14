@@ -1209,8 +1209,6 @@
 
   <script>
     const STORAGE_KEY = "haku.settings.v3";
-    const LEGACY_STORAGE_KEYS = ["haku.settings.v2", "homepage.settings.v1"];
-
     const THEME_META_COLORS = {
       ink: "#e3e3e3",
       paper: "#dcc8a8",
@@ -1306,12 +1304,6 @@
       }
     };
 
-    const LEGACY_DEFAULT_LINKS = [
-      { name: "Mail", url: "https://mail.google.com" },
-      { name: "Calendar", url: "https://calendar.google.com" },
-      { name: "GitHub", url: "https://github.com" }
-    ];
-
     let ENGINES = { ...BUILT_IN_ENGINES };
 
     const DEFAULT_SETTINGS = {
@@ -1380,11 +1372,10 @@
 
     function loadSettings() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || LEGACY_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return cloneDefaults();
         const parsed = JSON.parse(raw);
         const merged = { ...DEFAULT_SETTINGS, ...parsed };
-        if (isLegacyDefaultLinks(parsed.links)) merged.links = [];
         merged.customEngines = sanitizeCustomEngines(merged.customEngines);
         refreshEngines(merged.customEngines);
         merged.engineOrder = sanitizeEngineOrder(merged.engineOrder, merged.enabledEngines);
@@ -1494,13 +1485,6 @@
           url: String(link.url || "").trim()
         }))
         .filter((link) => link.name && isSafeUrl(link.url));
-    }
-
-    function isLegacyDefaultLinks(value) {
-      if (!Array.isArray(value) || value.length !== LEGACY_DEFAULT_LINKS.length) return false;
-      return LEGACY_DEFAULT_LINKS.every((link, index) => (
-        value[index]?.name === link.name && value[index]?.url === link.url
-      ));
     }
 
     function isSafeUrl(value) {
