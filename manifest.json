@@ -1,7 +1,7 @@
 {
   "name": "Haku",
   "short_name": "Haku",
-  "description": "Haku is a zen browser homepage",
+  "description": "Haku is a zen homepage",
   "id": "./",
   "start_url": "./",
   "scope": "./",
