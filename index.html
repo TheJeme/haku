@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
-  <meta name="theme-color" content="#e6ece4" />
+  <meta name="theme-color" content="#e3e3e3" />
   <meta name="color-scheme" content="light" />
   <meta name="robots" content="index, follow" />
   <meta property="og:type" content="website" />
@@ -31,62 +31,91 @@
   <style>
     :root {
       color-scheme: light;
-      --paper: #eef5ea;
-      --paper-deep: #dbe8d8;
-      --ink: #1f241f;
-      --muted: #687366;
-      --line: rgba(31, 36, 31, 0.14);
-      --line-strong: rgba(31, 36, 31, 0.28);
-      --surface: rgba(251, 252, 248, 0.74);
-      --surface-solid: #fbfcf8;
-      --shadow: 0 24px 80px rgba(35, 47, 37, 0.10);
-      --attention: #667a62;
-      --attention-soft: rgba(102, 122, 98, 0.14);
+      --paper: #f7f7f7;
+      --paper-deep: #e3e3e3;
+      --ink: #171817;
+      --muted: #666964;
+      --line: rgba(23, 24, 23, 0.14);
+      --line-strong: rgba(23, 24, 23, 0.30);
+      --surface: rgba(255, 255, 255, 0.72);
+      --surface-soft: rgba(239, 239, 239, 0.72);
+      --surface-row: rgba(242, 242, 242, 0.62);
+      --surface-hover: rgba(255, 255, 255, 0.94);
+      --surface-solid: #ffffff;
+      --shadow: 0 24px 80px rgba(23, 24, 23, 0.10);
+      --attention: #686868;
+      --attention-soft: rgba(0, 0, 0, 0.12);
       --danger: #9f4b3f;
       --danger-soft: rgba(159, 75, 63, 0.10);
       --radius: 8px;
     }
 
     :root[data-theme="paper"] {
-      --paper: #f7f2e8;
-      --paper-deep: #e8ddc8;
-      --ink: #24231e;
-      --muted: #746b5d;
-      --line: rgba(36, 35, 30, 0.14);
-      --line-strong: rgba(36, 35, 30, 0.32);
-      --surface: rgba(255, 252, 244, 0.78);
-      --surface-solid: #fffcf4;
-      --shadow: 0 24px 80px rgba(62, 48, 27, 0.11);
-      --attention: #6f765f;
-      --attention-soft: rgba(111, 118, 95, 0.14);
+      --paper: #f4ead7;
+      --paper-deep: #dcc8a8;
+      --ink: #252019;
+      --muted: #766650;
+      --line: rgba(37, 32, 25, 0.15);
+      --line-strong: rgba(37, 32, 25, 0.34);
+      --surface: rgba(255, 250, 239, 0.78);
+      --surface-soft: rgba(232, 216, 188, 0.50);
+      --surface-row: rgba(239, 225, 199, 0.58);
+      --surface-hover: rgba(255, 250, 239, 0.96);
+      --surface-solid: #fff8eb;
+      --shadow: 0 24px 80px rgba(78, 54, 26, 0.12);
+      --attention: #706f54;
+      --attention-soft: rgba(112, 111, 84, 0.14);
     }
 
     :root[data-theme="stone"] {
-      --paper: #eef1f0;
-      --paper-deep: #d5dcdb;
-      --ink: #202625;
-      --muted: #65716f;
-      --line: rgba(32, 38, 37, 0.15);
-      --line-strong: rgba(32, 38, 37, 0.34);
-      --surface: rgba(249, 251, 250, 0.76);
-      --surface-solid: #f9fbfa;
-      --shadow: 0 24px 80px rgba(28, 39, 38, 0.12);
-      --attention: #667b76;
-      --attention-soft: rgba(102, 123, 118, 0.14);
+      --paper: #e9eef0;
+      --paper-deep: #c8d1d4;
+      --ink: #1f2527;
+      --muted: #606d71;
+      --line: rgba(31, 37, 39, 0.15);
+      --line-strong: rgba(31, 37, 39, 0.34);
+      --surface: rgba(249, 252, 253, 0.76);
+      --surface-soft: rgba(220, 228, 231, 0.58);
+      --surface-row: rgba(229, 236, 238, 0.62);
+      --surface-hover: rgba(249, 252, 253, 0.96);
+      --surface-solid: #f9fcfd;
+      --shadow: 0 24px 80px rgba(25, 35, 38, 0.12);
+      --attention: #657974;
+      --attention-soft: rgba(101, 121, 116, 0.14);
+    }
+
+    :root[data-theme="matcha"] {
+      --paper: #e8f1df;
+      --paper-deep: #c7d9bc;
+      --ink: #20271c;
+      --muted: #65725c;
+      --line: rgba(32, 39, 28, 0.15);
+      --line-strong: rgba(32, 39, 28, 0.34);
+      --surface: rgba(249, 253, 246, 0.76);
+      --surface-soft: rgba(215, 229, 202, 0.58);
+      --surface-row: rgba(224, 235, 214, 0.62);
+      --surface-hover: rgba(249, 253, 246, 0.96);
+      --surface-solid: #f9fdf6;
+      --shadow: 0 24px 80px rgba(34, 50, 28, 0.12);
+      --attention: #687b5c;
+      --attention-soft: rgba(104, 123, 92, 0.14);
     }
 
     :root[data-theme="dawn"] {
-      --paper: #f8eee8;
-      --paper-deep: #ead1c3;
-      --ink: #29221f;
-      --muted: #7b665c;
-      --line: rgba(41, 34, 31, 0.14);
-      --line-strong: rgba(41, 34, 31, 0.32);
-      --surface: rgba(255, 250, 246, 0.78);
-      --surface-solid: #fffaf6;
-      --shadow: 0 24px 80px rgba(66, 39, 28, 0.11);
-      --attention: #6f7868;
-      --attention-soft: rgba(111, 120, 104, 0.14);
+      --paper: #f6e2da;
+      --paper-deep: #dfb6a5;
+      --ink: #2b211d;
+      --muted: #7a5f55;
+      --line: rgba(43, 33, 29, 0.15);
+      --line-strong: rgba(43, 33, 29, 0.34);
+      --surface: rgba(255, 247, 243, 0.78);
+      --surface-soft: rgba(233, 199, 186, 0.54);
+      --surface-row: rgba(241, 213, 203, 0.60);
+      --surface-hover: rgba(255, 247, 243, 0.96);
+      --surface-solid: #fff7f3;
+      --shadow: 0 24px 80px rgba(74, 37, 27, 0.12);
+      --attention: #77705d;
+      --attention-soft: rgba(119, 112, 93, 0.14);
     }
 
     * {
@@ -117,8 +146,9 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(rgba(31, 36, 31, 0.028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(31, 36, 31, 0.018) 1px, transparent 1px);
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      opacity: 0.18;
       background-size: 44px 44px;
       mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
     }
@@ -148,7 +178,7 @@
       height: 42px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(251, 252, 248, 0.66);
+      background: var(--surface);
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -159,7 +189,7 @@
 
     .settings-button:hover {
       border-color: var(--line-strong);
-      background: rgba(251, 252, 248, 0.9);
+      background: var(--surface-hover);
       transform: translateY(-1px);
     }
 
@@ -224,21 +254,21 @@
     }
 
     .clock-face {
-      fill: rgba(251, 252, 248, 0.42);
+      fill: var(--surface-soft);
       stroke: var(--line-strong);
       stroke-width: 2;
       vector-effect: non-scaling-stroke;
     }
 
     .tick {
-      stroke: rgba(31, 36, 31, 0.42);
+      stroke: var(--line-strong);
       stroke-width: 1.2;
       stroke-linecap: round;
       vector-effect: non-scaling-stroke;
     }
 
     .tick.major {
-      stroke: rgba(31, 36, 31, 0.62);
+      stroke: var(--ink);
       stroke-width: 2.2;
     }
 
@@ -262,7 +292,7 @@
     }
 
     .hand.second {
-      stroke: rgba(31, 36, 31, 0.44);
+      stroke: var(--muted);
       stroke-width: 1.8;
     }
 
@@ -275,7 +305,7 @@
     }
 
     .clock-pin-ring {
-      fill: rgba(251, 252, 248, 0.92);
+      fill: var(--surface-solid);
       stroke: var(--ink);
       stroke-width: 2;
       vector-effect: non-scaling-stroke;
@@ -316,7 +346,7 @@
     }
 
     .search-input::placeholder {
-      color: rgba(31, 36, 31, 0.38);
+      color: var(--muted);
     }
 
     .engine-picker {
@@ -331,7 +361,7 @@
       height: 46px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(251, 252, 248, 0.82);
+      background: var(--surface);
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -341,7 +371,7 @@
     .engine-picker-button:hover,
     .engine-picker-button[aria-expanded="true"] {
       border-color: var(--line-strong);
-      background: rgba(251, 252, 248, 0.96);
+      background: var(--surface-hover);
     }
 
     .engine-picker-button[aria-expanded="true"] {
@@ -367,7 +397,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--surface-solid);
-      box-shadow: 0 18px 60px rgba(35, 47, 37, 0.14);
+      box-shadow: var(--shadow);
       display: grid;
       gap: 2px;
     }
@@ -395,7 +425,7 @@
     .engine-option.is-active,
     .engine-option.is-focused,
     .engine-option:focus {
-      background: rgba(31, 36, 31, 0.06);
+      background: var(--surface-soft);
       outline: none;
     }
 
@@ -414,7 +444,7 @@
       height: 46px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(251, 252, 248, 0.82);
+      background: var(--surface);
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -453,13 +483,13 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: rgba(31, 36, 31, 0.34);
+      background: var(--line-strong);
     }
 
     .weather-icon {
       width: 14px;
       height: 14px;
-      border: 1.5px solid rgba(31, 36, 31, 0.42);
+      border: 1.5px solid var(--line-strong);
       border-radius: 50%;
       display: inline-block;
       flex: 0 0 auto;
@@ -478,7 +508,7 @@
       position: absolute;
       width: 8px;
       height: 8px;
-      border: 1.5px solid rgba(31, 36, 31, 0.42);
+      border: 1.5px solid var(--line-strong);
       border-bottom: 0;
       border-radius: 50% 50% 0 0;
       left: 3px;
@@ -501,8 +531,8 @@
       border-radius: 999px;
       left: 7px;
       top: 10px;
-      background: rgba(31, 36, 31, 0.36);
-      box-shadow: -5px -1px 0 rgba(31, 36, 31, 0.28), 5px -1px 0 rgba(31, 36, 31, 0.28);
+      background: var(--line-strong);
+      box-shadow: -5px -1px 0 var(--line), 5px -1px 0 var(--line);
     }
 
     .weather-icon.snow::after {
@@ -513,8 +543,8 @@
       border-radius: 50%;
       left: 4px;
       top: 15px;
-      background: rgba(31, 36, 31, 0.32);
-      box-shadow: 6px 0 0 rgba(31, 36, 31, 0.26);
+      background: var(--line-strong);
+      box-shadow: 6px 0 0 var(--line);
     }
 
     .links {
@@ -620,7 +650,7 @@
       min-height: 42px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(241, 244, 238, 0.76);
+      background: var(--surface-soft);
       color: var(--ink);
       padding: 0 11px;
       outline: none;
@@ -653,7 +683,7 @@
       padding: 7px 9px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(241, 244, 238, 0.58);
+      background: var(--surface-row);
     }
 
     .draggable-row {
@@ -671,8 +701,8 @@
       border: 1px solid var(--line-strong);
       border-radius: var(--radius);
       background:
-        linear-gradient(90deg, rgba(251, 252, 248, 0.86), rgba(241, 244, 238, 0.46));
-      box-shadow: inset 0 0 0 1px rgba(251, 252, 248, 0.62);
+        linear-gradient(90deg, var(--surface), var(--surface-soft));
+      box-shadow: inset 0 0 0 1px var(--surface);
       pointer-events: none;
     }
 
@@ -709,7 +739,7 @@
     .drag-handle:hover,
     .drag-handle:focus {
       border-color: var(--line);
-      background: rgba(251, 252, 248, 0.72);
+      background: var(--surface);
       color: var(--ink);
       outline: none;
     }
@@ -769,7 +799,7 @@
       min-height: 38px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(251, 252, 248, 0.82);
+      background: var(--surface);
       padding: 0 10px;
       color: var(--ink);
       outline: none;
@@ -780,7 +810,7 @@
       min-height: 38px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(251, 252, 248, 0.72);
+      background: var(--surface);
       cursor: pointer;
       transition: border-color 160ms ease, background 160ms ease;
     }
@@ -799,7 +829,7 @@
     .icon-button:hover,
     .text-button:hover {
       border-color: var(--line-strong);
-      background: rgba(251, 252, 248, 0.96);
+      background: var(--surface-hover);
     }
 
     .danger {
@@ -808,7 +838,7 @@
 
     .text-button.danger:hover {
       border-color: var(--line-strong);
-      background: rgba(251, 252, 248, 0.96);
+      background: var(--surface-hover);
     }
 
     @media (max-width: 640px) {
@@ -923,9 +953,10 @@
             <label class="field">
               Theme
               <select id="themeMode">
-                <option value="moss">Moss</option>
+                <option value="ink">Ink</option>
                 <option value="paper">Paper</option>
                 <option value="stone">Stone</option>
+                <option value="matcha">Matcha</option>
                 <option value="dawn">Dawn</option>
               </select>
             </label>
@@ -939,7 +970,7 @@
           <div class="link-row custom-engine-row">
             <input id="customEngineName" type="text" placeholder="Name" aria-label="Custom engine name" />
             <input id="customEngineUrl" type="url" placeholder="https://example.com/search?q={query}" aria-label="Custom engine URL template" />
-            <input id="customEnginePrefix" type="text" placeholder="prefix" aria-label="Custom engine prefix" />
+            <input id="customEnginePrefix" type="text" placeholder="/prefix" aria-label="Custom engine slash prefix" />
             <input id="customEngineShortcut" type="text" maxlength="1" placeholder="key" aria-label="Custom engine shortcut" />
             <button class="text-button" id="addCustomEngine" type="button">Add</button>
           </div>
@@ -981,10 +1012,11 @@
     const LEGACY_STORAGE_KEYS = ["haku.settings.v2", "homepage.settings.v1"];
 
     const THEME_META_COLORS = {
-      moss: "#dbe8d8",
-      paper: "#e8ddc8",
+      ink: "#e3e3e3",
+      paper: "#dcc8a8",
       stone: "#d5dcdb",
-      dawn: "#ead1c3"
+      matcha: "#c7d9bc",
+      dawn: "#dfb6a5"
     };
 
     const BUILT_IN_ENGINES = {
@@ -1074,6 +1106,12 @@
       }
     };
 
+    const LEGACY_DEFAULT_LINKS = [
+      { name: "Mail", url: "https://mail.google.com" },
+      { name: "Calendar", url: "https://calendar.google.com" },
+      { name: "GitHub", url: "https://github.com" }
+    ];
+
     let ENGINES = { ...BUILT_IN_ENGINES };
 
     const DEFAULT_SETTINGS = {
@@ -1082,16 +1120,12 @@
       enabledEngines: ["google", "duckduckgo", "youtube", "reddit"],
       engineOrder: ["google", "bing", "brave", "duckduckgo", "ecosia", "startpage", "kagi", "yandex", "youtube", "reddit", "wikipedia", "github"],
       customEngines: [],
-      themeMode: "moss",
+      themeMode: "ink",
       clockMode: "digital",
       timeFormat: "24",
       weatherCity: "",
       weatherUnits: "celsius",
-      links: [
-        { name: "Mail", url: "https://mail.google.com" },
-        { name: "Calendar", url: "https://calendar.google.com" },
-        { name: "GitHub", url: "https://github.com" }
-      ]
+      links: []
     };
 
     const state = {
@@ -1135,13 +1169,14 @@
         if (!raw) return cloneDefaults();
         const parsed = JSON.parse(raw);
         const merged = { ...DEFAULT_SETTINGS, ...parsed };
+        if (isLegacyDefaultLinks(parsed.links)) merged.links = [];
         merged.customEngines = sanitizeCustomEngines(merged.customEngines);
         refreshEngines(merged.customEngines);
         merged.engineOrder = sanitizeEngineOrder(merged.engineOrder, merged.enabledEngines);
         merged.enabledEngines = orderEnabledEngines(sanitizeEnabledEngines(merged.enabledEngines), merged.engineOrder);
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
-        merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "moss";
+        merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
         merged.links = sanitizeLinks(merged.links);
@@ -1192,7 +1227,7 @@
           }
           usedIds.add(id);
 
-          const prefix = String(engine.prefix || engine.aliases?.[0] || "").trim().toLowerCase().replace(/^!/, "");
+          const prefix = String(engine.prefix || engine.aliases?.[0] || "").trim().toLowerCase().replace(/^[/!]+/, "");
           const aliases = Array.from(new Set([prefix, slugify(name)].filter(Boolean)));
           const shortcut = String(engine.shortcut || "").trim().toLowerCase().match(/^[a-z0-9]$/)?.[0] || "";
 
@@ -1239,6 +1274,13 @@
         .filter((link) => link.name && isSafeUrl(link.url));
     }
 
+    function isLegacyDefaultLinks(value) {
+      if (!Array.isArray(value) || value.length !== LEGACY_DEFAULT_LINKS.length) return false;
+      return LEGACY_DEFAULT_LINKS.every((link, index) => (
+        value[index]?.name === link.name && value[index]?.url === link.url
+      ));
+    }
+
     function isSafeUrl(value) {
       try {
         const url = new URL(value);
@@ -1252,7 +1294,7 @@
       state.settings = { ...state.settings, ...next };
       state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
       refreshEngines(state.settings.customEngines);
-      state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "moss";
+      state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
       state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
       state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
       if (!state.settings.enabledEngines.includes(state.settings.defaultEngine)) {
@@ -1274,7 +1316,7 @@
     }
 
     function applyTheme() {
-      const theme = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "moss";
+      const theme = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
       document.documentElement.dataset.theme = theme;
       document.body.dataset.theme = theme;
       document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_META_COLORS[theme]);
@@ -1444,7 +1486,7 @@
         <div class="link-row custom-engine-row">
           <input type="text" value="${escapeAttribute(engine.name)}" aria-label="Custom engine name" disabled />
           <input type="url" value="${escapeAttribute(engine.url)}" aria-label="Custom engine URL" disabled />
-          <input type="text" value="${escapeAttribute(engine.prefix || "")}" aria-label="Custom engine prefix" disabled />
+          <input type="text" value="${escapeAttribute(engine.prefix ? `/${engine.prefix}` : "")}" aria-label="Custom engine slash prefix" disabled />
           <input type="text" value="${escapeAttribute(engine.shortcut || "")}" aria-label="Custom engine shortcut" disabled />
           <button class="icon-button" type="button" data-remove-custom-engine="${engine.id}" aria-label="Remove custom engine" title="Remove">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -1551,7 +1593,15 @@
 
     function resolveSearch(query) {
       const parts = query.trim().split(/\s+/);
-      const prefix = parts[0]?.replace(/^!/, "").toLowerCase();
+      const prefixToken = parts[0] || "";
+      if (!prefixToken.startsWith("/") || prefixToken.length === 1) {
+        return {
+          engineKey: state.settings.activeEngine,
+          query
+        };
+      }
+
+      const prefix = prefixToken.slice(1).toLowerCase();
       const engineKey = Object.keys(ENGINES).find((key) => {
         const aliases = ENGINES[key].aliases || [];
         return key === prefix || aliases.includes(prefix);
