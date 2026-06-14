@@ -887,6 +887,14 @@
       align-items: center;
       gap: 10px;
       font-size: 0.9rem;
+      min-width: 0;
+    }
+
+    .engine-name-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .engine-name img {
@@ -900,6 +908,16 @@
       width: 18px;
       height: 18px;
       accent-color: var(--ink);
+    }
+
+    .radio:disabled {
+      opacity: 0.28;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+
+    .engine-setting-row:has(.radio:disabled) .mini-label {
+      opacity: 0.45;
     }
 
     .mini-label {
@@ -985,7 +1003,6 @@
       }
 
       .field-grid,
-      .engine-setting-row,
       .link-row {
         grid-template-columns: 1fr;
       }
@@ -996,7 +1013,24 @@
       }
 
       .engine-setting-row {
-        justify-items: start;
+        grid-template-columns: 30px minmax(0, 1fr) auto auto;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .engine-setting-row > span:first-of-type {
+        display: none;
+      }
+
+      .engine-name {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .engine-name img,
+      .engine-name input {
+        flex: 0 0 auto;
       }
 
       .link-row {
@@ -1717,7 +1751,7 @@
             <label class="engine-name">
               <input class="check" type="checkbox" data-engine-enabled="${key}" ${checked} />
               <img src="${engine.icon}" alt="" />
-              ${escapeHtml(engine.name)}
+              <span class="engine-name-text">${escapeHtml(engine.name)}</span>
             </label>
             <span></span>
             <span class="mini-label">Default</span>
