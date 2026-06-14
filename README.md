@@ -1,6 +1,6 @@
 # Haku
 
-A quiet, static browser homepage for search, time, weather, and a few useful links.
+Zen homepage.
 
 Haku is designed to stay small: no build step, no backend, no account, and no `config.json`. Settings are saved in the browser with `localStorage`.
 
@@ -20,7 +20,8 @@ Haku is designed to stay small: no build step, no backend, no account, and no `c
 - Show or hide current weather and condition through Open-Meteo, with no API key required.
 - Add, edit, and remove quick links from the settings panel. New installs start with no default links.
 - Drag quick links in settings to reorder them.
-- Install metadata through `manifest.json`.
+- Install metadata through `site.webmanifest`.
+- Chrome and Firefox extension manifests for using Haku as a new tab page.
 - Local SVG icons under `assets/`.
 
 ## Run Locally
@@ -34,6 +35,25 @@ python -m http.server 8080
 ```
 
 Then open `http://localhost:8080`.
+
+## Browser Extensions
+
+Build unpacked extension folders:
+
+```sh
+sh scripts/build-extensions.sh
+```
+
+The script writes:
+
+- `dist/chrome/` for Chrome, Chromium, Brave, and Edge.
+- `dist/firefox/` for Firefox.
+
+Load the Chrome build from `chrome://extensions` with Developer mode enabled and "Load unpacked".
+
+Load the Firefox build from `about:debugging#/runtime/this-firefox` with "Load Temporary Add-on" and select `dist/firefox/manifest.json`.
+
+The extension replaces the browser new tab page with Haku. Settings are still saved locally in that browser profile.
 
 ## Docker
 
@@ -67,7 +87,11 @@ If no weather city is saved, Haku uses the browser timezone as a first guess.
 
 ## Files
 
-- [index.html](./index.html) contains the app UI, styling, and behavior.
-- [manifest.json](./manifest.json) defines install metadata.
+- [index.html](./index.html) contains the app markup.
+- [styles.css](./styles.css) contains the app styling.
+- [app.js](./app.js) contains the app behavior.
+- [site.webmanifest](./site.webmanifest) defines website install metadata.
+- `extension/` contains browser extension manifests.
+- `scripts/build-extensions.sh` builds unpacked extension folders.
 - [favicon.svg](./favicon.svg) is the compact browser favicon.
 - `assets/` contains local app and search engine SVG icons.

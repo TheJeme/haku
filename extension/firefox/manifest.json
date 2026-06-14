@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Haku",
+  "short_name": "Haku",
+  "version": "1.0.0",
+  "description": "Zen new tab homepage",
+  "icons": {
+    "128": "favicon.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "https://api.open-meteo.com/*",
+    "https://geocoding-api.open-meteo.com/*",
+    "https://en.wikipedia.org/*",
+    "https://suggestqueries.google.com/*"
+  ],
+  "content_security_policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com https://en.wikipedia.org https://suggestqueries.google.com; object-src 'none';",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "haku-new-tab@jeme.app",
+      "strict_min_version": "109.0"
+    }
+  }
+}
