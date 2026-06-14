@@ -631,6 +631,38 @@
       text-transform: uppercase;
     }
 
+    .shortcut-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .shortcut-item {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-row);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .shortcut-item kbd {
+      min-width: 34px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--ink);
+      font: 0.78rem ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      text-align: center;
+      white-space: nowrap;
+    }
+
     .field-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -857,6 +889,7 @@
       }
 
       .field-grid,
+      .shortcut-list,
       .engine-setting-row,
       .link-row {
         grid-template-columns: 1fr;
@@ -904,7 +937,7 @@
         </form>
       </section>
 
-      <div class="quiet-row">
+      <div class="quiet-row" id="weatherRow">
         <div class="weather" id="weather" aria-live="polite"></div>
       </div>
 
@@ -980,6 +1013,13 @@
           <h3 class="section-title">Weather</h3>
           <div class="field-grid">
             <label class="field">
+              Show
+              <select id="weatherEnabled">
+                <option value="true">Visible</option>
+                <option value="false">Hidden</option>
+              </select>
+            </label>
+            <label class="field">
               City
               <input id="weatherCity" type="text" autocomplete="address-level2" placeholder="City" />
             </label>
@@ -991,6 +1031,11 @@
               </select>
             </label>
           </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">Shortcuts</h3>
+          <div class="shortcut-list" id="shortcutList"></div>
         </section>
 
         <section class="section">
@@ -1123,6 +1168,7 @@
       themeMode: "ink",
       clockMode: "digital",
       timeFormat: "24",
+      weatherEnabled: true,
       weatherCity: "",
       weatherUnits: "celsius",
       links: []
@@ -1142,6 +1188,7 @@
       engineMenu: document.getElementById("engineMenu"),
       searchForm: document.getElementById("searchForm"),
       searchInput: document.getElementById("searchInput"),
+      weatherRow: document.getElementById("weatherRow"),
       weather: document.getElementById("weather"),
       links: document.getElementById("links"),
       openSettings: document.getElementById("openSettings"),
@@ -1150,8 +1197,10 @@
       timeFormat: document.getElementById("timeFormat"),
       themeMode: document.getElementById("themeMode"),
       engineSettings: document.getElementById("engineSettings"),
+      weatherEnabled: document.getElementById("weatherEnabled"),
       weatherCity: document.getElementById("weatherCity"),
       weatherUnits: document.getElementById("weatherUnits"),
+      shortcutList: document.getElementById("shortcutList"),
       customEngineList: document.getElementById("customEngineList"),
       customEngineName: document.getElementById("customEngineName"),
       customEngineUrl: document.getElementById("customEngineUrl"),
@@ -1177,6 +1226,7 @@
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
         merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
+        merged.weatherEnabled = merged.weatherEnabled !== false;
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
         merged.links = sanitizeLinks(merged.links);
@@ -1295,6 +1345,7 @@
       state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
       refreshEngines(state.settings.customEngines);
       state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
+      state.settings.weatherEnabled = state.settings.weatherEnabled !== false;
       state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
       state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
       if (!state.settings.enabledEngines.includes(state.settings.defaultEngine)) {
@@ -1446,12 +1497,43 @@
       dom.links.innerHTML = links.map((link) => `<a href="${escapeAttribute(link.url)}">${escapeHtml(link.name)}</a>`).join("");
     }
 
+    function renderShortcutHelp() {
+      const engines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
+      const slashShortcuts = engines
+        .map((key) => {
+          const engine = ENGINES[key];
+          const alias = engine.aliases?.[0] || key;
+          return { keys: `/${alias}`, label: engine.name };
+        })
+        .slice(0, 8);
+      const letterShortcuts = engines
+        .filter((key) => ENGINES[key].shortcut)
+        .map((key) => ({ keys: `Alt+${ENGINES[key].shortcut.toUpperCase()}`, label: ENGINES[key].name }))
+        .slice(0, 8);
+      const items = [
+        { keys: "/", label: "Focus search" },
+        { keys: "Alt+1-9", label: "Pick by order" },
+        { keys: "Esc", label: "Close picker" },
+        ...letterShortcuts,
+        ...slashShortcuts
+      ];
+
+      dom.shortcutList.innerHTML = items.map((item) => `
+        <div class="shortcut-item">
+          <kbd>${escapeHtml(item.keys)}</kbd>
+          <span>${escapeHtml(item.label)}</span>
+        </div>
+      `).join("");
+    }
+
     function renderSettings() {
       dom.clockMode.value = state.settings.clockMode;
       dom.timeFormat.value = state.settings.timeFormat;
       dom.themeMode.value = state.settings.themeMode;
+      dom.weatherEnabled.value = String(state.settings.weatherEnabled);
       dom.weatherCity.value = state.settings.weatherCity;
       dom.weatherUnits.value = state.settings.weatherUnits;
+      renderShortcutHelp();
 
       dom.engineSettings.innerHTML = sanitizeEngineOrder(state.settings.engineOrder).map((key) => {
         const engine = ENGINES[key];
@@ -1521,6 +1603,13 @@
     }
 
     async function updateWeather() {
+      dom.weatherRow.hidden = !state.settings.weatherEnabled;
+      if (!state.settings.weatherEnabled) {
+        if (state.weatherAbort) state.weatherAbort.abort();
+        dom.weather.textContent = "";
+        return;
+      }
+
       const city = getWeatherCity();
       if (!city) {
         dom.weather.textContent = "";
@@ -1897,6 +1986,10 @@
     dom.clockMode.addEventListener("change", () => updateSettings({ clockMode: dom.clockMode.value }));
     dom.timeFormat.addEventListener("change", () => updateSettings({ timeFormat: dom.timeFormat.value }));
     dom.themeMode.addEventListener("change", () => updateSettings({ themeMode: dom.themeMode.value }));
+    dom.weatherEnabled.addEventListener("change", () => {
+      updateSettings({ weatherEnabled: dom.weatherEnabled.value === "true" });
+      updateWeather();
+    });
     dom.weatherUnits.addEventListener("change", () => {
       updateSettings({ weatherUnits: dom.weatherUnits.value });
       updateWeather();
