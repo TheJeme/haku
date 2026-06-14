@@ -54,6 +54,7 @@ Use the settings button in the top-right corner to edit:
 - custom search engines
 - default search engine
 - online search suggestions
+- optional local search history
 - clock style
 - date and time formats
 - background theme

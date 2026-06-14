@@ -120,6 +120,45 @@
       --attention-soft: rgba(119, 112, 93, 0.14);
     }
 
+    :root[data-theme="night"] {
+      color-scheme: dark;
+      --paper: #101111;
+      --paper-deep: #202423;
+      --ink: #f2f3ef;
+      --muted: #a9aea7;
+      --line: rgba(242, 243, 239, 0.17);
+      --line-strong: rgba(242, 243, 239, 0.42);
+      --surface: rgba(30, 33, 32, 0.78);
+      --surface-soft: rgba(44, 48, 46, 0.78);
+      --surface-row: rgba(37, 41, 39, 0.82);
+      --surface-hover: rgba(54, 59, 56, 0.96);
+      --surface-solid: #171918;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      --attention: #e0c979;
+      --attention-soft: rgba(224, 201, 121, 0.18);
+      --danger: #f08b7c;
+      --danger-soft: rgba(240, 139, 124, 0.16);
+    }
+
+    :root[data-theme="contrast"] {
+      --paper: #ffffff;
+      --paper-deep: #ffffff;
+      --ink: #000000;
+      --muted: #202020;
+      --line: rgba(0, 0, 0, 0.45);
+      --line-strong: rgba(0, 0, 0, 0.82);
+      --surface: #ffffff;
+      --surface-soft: #f0f0f0;
+      --surface-row: #f7f7f7;
+      --surface-hover: #e8e8e8;
+      --surface-solid: #ffffff;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.20);
+      --attention: #7a4f00;
+      --attention-soft: rgba(122, 79, 0, 0.18);
+      --danger: #8a0000;
+      --danger-soft: rgba(138, 0, 0, 0.12);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -421,6 +460,14 @@
       white-space: nowrap;
     }
 
+    .suggestion-source {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
     .engine-picker {
       position: absolute;
       left: 8px;
@@ -453,6 +500,11 @@
       height: 19px;
       object-fit: contain;
       filter: saturate(0) brightness(0.22);
+    }
+
+    :root[data-theme="night"] .engine-picker-button img,
+    :root[data-theme="night"] .engine-option img {
+      filter: saturate(0) invert(1) brightness(1.2);
     }
 
     .engine-menu {
@@ -799,6 +851,16 @@
       box-shadow: 0 0 0 3px var(--attention-soft);
     }
 
+    .field-error {
+      color: var(--danger);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .field-error:empty {
+      display: none;
+    }
+
     .engine-settings {
       display: grid;
       gap: 8px;
@@ -1104,11 +1166,13 @@
             <label class="field">
               Theme
               <select id="themeMode">
+                <option value="auto">Auto</option>
                 <option value="ink">Ink</option>
                 <option value="paper">Paper</option>
                 <option value="stone">Stone</option>
                 <option value="matcha">Matcha</option>
                 <option value="dawn">Dawn</option>
+                <option value="contrast">High contrast</option>
               </select>
             </label>
           </div>
@@ -1163,6 +1227,13 @@
                 <option value="current">Current engine</option>
               </select>
             </label>
+            <label class="field">
+              Search history
+              <select id="searchHistoryEnabled">
+                <option value="false">Do not save</option>
+                <option value="true">Save locally</option>
+              </select>
+            </label>
           </div>
           <div class="engine-settings" id="engineSettings"></div>
           <div class="link-list" id="customEngineList"></div>
@@ -1173,6 +1244,7 @@
             <input id="customEngineShortcut" type="text" maxlength="1" placeholder="key" aria-label="Custom engine shortcut" />
             <button class="text-button" id="addCustomEngine" type="button">Add</button>
           </div>
+          <div class="field-error" id="customEngineError" role="status" aria-live="polite"></div>
         </section>
 
         <section class="section">
@@ -1221,11 +1293,14 @@
   <script>
     const STORAGE_KEY = "haku.settings.v3";
     const THEME_META_COLORS = {
+      auto: "#e3e3e3",
       ink: "#e3e3e3",
       paper: "#dcc8a8",
       stone: "#d5dcdb",
       matcha: "#c7d9bc",
-      dawn: "#dfb6a5"
+      dawn: "#dfb6a5",
+      night: "#202423",
+      contrast: "#ffffff"
     };
 
     const BUILT_IN_ENGINES = {
@@ -1323,12 +1398,14 @@
       enabledEngines: ["duckduckgo", "google", "youtube", "reddit"],
       engineOrder: ["duckduckgo", "google", "bing", "brave", "ecosia", "startpage", "kagi", "yandex", "youtube", "reddit", "wikipedia", "github"],
       customEngines: [],
-      themeMode: "ink",
+      themeMode: "auto",
       clockMode: "digital",
       timeFormat: "24",
       dateFormat: "short-weekday",
       suggestionsEnabled: true,
       suggestionSource: "general",
+      searchHistoryEnabled: false,
+      searchHistory: [],
       weatherEnabled: true,
       weatherCity: "",
       weatherUnits: "celsius",
@@ -1367,6 +1444,7 @@
       themeMode: document.getElementById("themeMode"),
       suggestionsEnabled: document.getElementById("suggestionsEnabled"),
       suggestionSource: document.getElementById("suggestionSource"),
+      searchHistoryEnabled: document.getElementById("searchHistoryEnabled"),
       engineSettings: document.getElementById("engineSettings"),
       weatherEnabled: document.getElementById("weatherEnabled"),
       weatherCity: document.getElementById("weatherCity"),
@@ -1377,6 +1455,7 @@
       customEngineUrl: document.getElementById("customEngineUrl"),
       customEnginePrefix: document.getElementById("customEnginePrefix"),
       customEngineShortcut: document.getElementById("customEngineShortcut"),
+      customEngineError: document.getElementById("customEngineError"),
       addCustomEngine: document.getElementById("addCustomEngine"),
       linkList: document.getElementById("linkList"),
       addLink: document.getElementById("addLink"),
@@ -1395,10 +1474,12 @@
         merged.enabledEngines = orderEnabledEngines(sanitizeEnabledEngines(merged.enabledEngines), merged.engineOrder);
         merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
-        merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
+        merged.themeMode = sanitizeThemeMode(merged.themeMode);
         merged.dateFormat = sanitizeDateFormat(merged.dateFormat);
         merged.suggestionsEnabled = merged.suggestionsEnabled !== false;
         merged.suggestionSource = sanitizeSuggestionSource(merged.suggestionSource);
+        merged.searchHistoryEnabled = merged.searchHistoryEnabled === true;
+        merged.searchHistory = sanitizeSearchHistory(merged.searchHistory);
         merged.weatherEnabled = merged.weatherEnabled !== false;
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
@@ -1491,8 +1572,26 @@
       return value === "current" ? "current" : "general";
     }
 
+    function sanitizeThemeMode(value) {
+      return ["auto", "ink", "paper", "stone", "matcha", "dawn", "contrast"].includes(value) ? value : "auto";
+    }
+
     function sanitizeDateFormat(value) {
       return ["short-weekday", "long-weekday", "numeric-us", "numeric-eu", "numeric-dotted", "iso"].includes(value) ? value : "short-weekday";
+    }
+
+    function sanitizeSearchHistory(value) {
+      if (!Array.isArray(value)) return [];
+      const seen = new Set();
+      return value
+        .map((item) => String(item || "").trim())
+        .filter((item) => {
+          const key = item.toLowerCase();
+          if (!item || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .slice(0, 20);
     }
 
     function sanitizeLinks(value) {
@@ -1518,10 +1617,12 @@
       state.settings = { ...state.settings, ...next };
       state.settings.customEngines = sanitizeCustomEngines(state.settings.customEngines);
       refreshEngines(state.settings.customEngines);
-      state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
+      state.settings.themeMode = sanitizeThemeMode(state.settings.themeMode);
       state.settings.dateFormat = sanitizeDateFormat(state.settings.dateFormat);
       state.settings.suggestionsEnabled = state.settings.suggestionsEnabled !== false;
       state.settings.suggestionSource = sanitizeSuggestionSource(state.settings.suggestionSource);
+      state.settings.searchHistoryEnabled = state.settings.searchHistoryEnabled === true;
+      state.settings.searchHistory = sanitizeSearchHistory(state.settings.searchHistory);
       state.settings.weatherEnabled = state.settings.weatherEnabled !== false;
       state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
       state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
@@ -1544,10 +1645,18 @@
     }
 
     function applyTheme() {
-      const theme = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
+      const theme = resolveTheme(state.settings.themeMode);
       document.documentElement.dataset.theme = theme;
       document.body.dataset.theme = theme;
       document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_META_COLORS[theme]);
+    }
+
+    function resolveTheme(themeMode) {
+      const theme = sanitizeThemeMode(themeMode);
+      if (theme === "auto") {
+        return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "night" : "ink";
+      }
+      return theme;
     }
 
     function renderClock() {
@@ -1754,6 +1863,7 @@
       dom.themeMode.value = state.settings.themeMode;
       dom.suggestionsEnabled.value = String(state.settings.suggestionsEnabled);
       dom.suggestionSource.value = state.settings.suggestionSource;
+      dom.searchHistoryEnabled.value = String(state.settings.searchHistoryEnabled);
       dom.weatherEnabled.value = String(state.settings.weatherEnabled);
       dom.weatherCity.value = state.settings.weatherCity;
       dom.weatherUnits.value = state.settings.weatherUnits;
@@ -1901,7 +2011,19 @@
       const resolved = resolveSearch(query);
       const engine = ENGINES[resolved.engineKey] || ENGINES.google;
       const encoded = encodeURIComponent(resolved.query);
+      rememberSearch(query);
       window.location.href = engine.url.replace("{query}", encoded);
+    }
+
+    function rememberSearch(query) {
+      const normalized = String(query || "").trim();
+      if (!state.settings.searchHistoryEnabled || !normalized) return;
+
+      const next = [
+        normalized,
+        ...state.settings.searchHistory.filter((item) => item.toLowerCase() !== normalized.toLowerCase())
+      ].slice(0, 20);
+      updateSettings({ searchHistory: next });
     }
 
     function resolveSearch(query) {
@@ -2026,7 +2148,7 @@
 
     function scheduleSuggestions() {
       window.clearTimeout(state.suggestTimer);
-      if (!state.settings.suggestionsEnabled) {
+      if (!state.settings.suggestionsEnabled && !state.settings.searchHistoryEnabled) {
         closeSuggestions();
         return;
       }
@@ -2040,8 +2162,16 @@
         return;
       }
 
-      const providers = suggestionProviders(context.engineKey);
+      const historyItems = historySuggestions(context);
+      const providers = state.settings.suggestionsEnabled ? suggestionProviders(context.engineKey) : [];
       if (!providers.length) {
+        if (historyItems.length) {
+          state.suggestions = historyItems;
+          state.suggestionContext = context;
+          state.suggestionIndex = -1;
+          renderSuggestions();
+          return;
+        }
         closeSuggestions();
         return;
       }
@@ -2061,7 +2191,7 @@
             data = await response.json();
           }
           if (requestId !== state.suggestRequestId) return;
-          const seen = new Set();
+          const seen = new Set(historyItems.map((item) => item.value.toLowerCase()));
           const items = provider.parse(data)
             .map((item) => String(item).trim())
             .filter((item) => item && item.toLowerCase() !== context.query.toLowerCase())
@@ -2071,10 +2201,12 @@
               seen.add(key);
               return true;
             })
-            .slice(0, 6);
+            .slice(0, Math.max(0, 6 - historyItems.length))
+            .map((item) => ({ value: item, source: "web" }));
 
-          if (!items.length) continue;
-          state.suggestions = items;
+          const suggestions = [...historyItems, ...items];
+          if (!suggestions.length) continue;
+          state.suggestions = suggestions;
           state.suggestionContext = context;
           state.suggestionIndex = -1;
           renderSuggestions();
@@ -2084,7 +2216,29 @@
         }
       }
 
+      if (historyItems.length) {
+        state.suggestions = historyItems;
+        state.suggestionContext = context;
+        state.suggestionIndex = -1;
+        renderSuggestions();
+        return;
+      }
+
       closeSuggestions();
+    }
+
+    function historySuggestions(context) {
+      if (!state.settings.searchHistoryEnabled) return [];
+
+      const rawInput = dom.searchInput.value.trim().toLowerCase();
+      const query = context.query.toLowerCase();
+      return state.settings.searchHistory
+        .filter((item) => {
+          const normalized = item.toLowerCase();
+          return normalized.includes(rawInput) || normalized.includes(query);
+        })
+        .slice(0, 3)
+        .map((item) => ({ value: item, source: "history" }));
     }
 
     function renderSuggestions() {
@@ -2098,13 +2252,15 @@
       dom.suggestionMenu.innerHTML = state.suggestions.map((suggestion, index) => `
         <button class="suggestion-option${index === state.suggestionIndex ? " is-active" : ""}" type="button" role="option" data-suggestion-index="${index}" aria-selected="${index === state.suggestionIndex}">
           <span>${escapeHtml(displaySuggestion(suggestion))}</span>
+          <span class="suggestion-source">${suggestion.source === "history" ? "Recent" : ""}</span>
         </button>
       `).join("");
     }
 
     function displaySuggestion(suggestion) {
+      if (suggestion.source === "history") return suggestion.value;
       const prefix = state.suggestionContext?.prefixToken;
-      return prefix ? `${prefix} ${suggestion}` : suggestion;
+      return prefix ? `${prefix} ${suggestion.value}` : suggestion.value;
     }
 
     function closeSuggestions() {
@@ -2288,7 +2444,76 @@
       return true;
     }
 
+    function validateCustomEngineForm(requireValues = false) {
+      const name = dom.customEngineName.value.trim();
+      const url = dom.customEngineUrl.value.trim();
+      const prefix = dom.customEnginePrefix.value.trim().toLowerCase().replace(/^[/!]+/, "");
+      const shortcut = dom.customEngineShortcut.value.trim().toLowerCase();
+      const errors = [];
+      const hasInput = Boolean(name || url || prefix || shortcut);
+
+      [dom.customEngineName, dom.customEngineUrl, dom.customEnginePrefix, dom.customEngineShortcut].forEach((input) => {
+        input.setCustomValidity("");
+      });
+
+      if (!hasInput && !requireValues) {
+        dom.customEngineError.textContent = "";
+        return true;
+      }
+
+      if (!name) {
+        dom.customEngineName.setCustomValidity("Name is required.");
+        errors.push("Name is required.");
+      } else {
+        const duplicateName = Object.values(ENGINES).some((engine) => engine.name.toLowerCase() === name.toLowerCase());
+        if (duplicateName) {
+          dom.customEngineName.setCustomValidity("Use a unique engine name.");
+          errors.push("Use a unique engine name.");
+        }
+      }
+
+      if (!url) {
+        dom.customEngineUrl.setCustomValidity("URL template is required.");
+        errors.push("URL template is required.");
+      } else if (!url.includes("{query}")) {
+        dom.customEngineUrl.setCustomValidity("URL must contain {query}.");
+        errors.push("URL must contain {query}.");
+      } else if (!isSafeSearchUrl(url)) {
+        dom.customEngineUrl.setCustomValidity("Use a valid http or https URL.");
+        errors.push("Use a valid http or https URL.");
+      }
+
+      if (prefix) {
+        const prefixTaken = Object.keys(ENGINES).some((key) => key === prefix || ENGINES[key].aliases?.includes(prefix));
+        if (prefixTaken) {
+          dom.customEnginePrefix.setCustomValidity("Prefix is already used.");
+          errors.push("Prefix is already used.");
+        }
+      }
+
+      if (shortcut && !/^[a-z0-9]$/.test(shortcut)) {
+        dom.customEngineShortcut.setCustomValidity("Shortcut must be one letter or number.");
+        errors.push("Shortcut must be one letter or number.");
+      } else if (shortcut) {
+        const shortcutTaken = Object.values(ENGINES).some((engine) => engine.shortcut === shortcut);
+        if (shortcutTaken) {
+          dom.customEngineShortcut.setCustomValidity("Shortcut is already used.");
+          errors.push("Shortcut is already used.");
+        }
+      }
+
+      dom.customEngineError.textContent = Array.from(new Set(errors)).join(" ");
+      return errors.length === 0;
+    }
+
     function addCustomEngine() {
+      if (!validateCustomEngineForm(true)) {
+        [dom.customEngineName, dom.customEngineUrl, dom.customEnginePrefix, dom.customEngineShortcut]
+          .find((input) => !input.validity.valid)
+          ?.reportValidity();
+        return;
+      }
+
       const engine = sanitizeCustomEngines([{
         name: dom.customEngineName.value,
         url: dom.customEngineUrl.value,
@@ -2297,7 +2522,7 @@
       }])[0];
 
       if (!engine) {
-        window.alert("Custom search engines need a name and a safe URL template containing {query}.");
+        validateCustomEngineForm();
         return;
       }
 
@@ -2310,6 +2535,7 @@
       dom.customEngineUrl.value = "";
       dom.customEnginePrefix.value = "";
       dom.customEngineShortcut.value = "";
+      validateCustomEngineForm(false);
     }
 
     function removeCustomEngine(id) {
@@ -2462,6 +2688,11 @@
       updateSettings({ suggestionSource: dom.suggestionSource.value });
       scheduleSuggestions();
     });
+    dom.searchHistoryEnabled.addEventListener("change", () => {
+      const enabled = dom.searchHistoryEnabled.value === "true";
+      updateSettings({ searchHistoryEnabled: enabled, searchHistory: enabled ? state.settings.searchHistory : [] });
+      scheduleSuggestions();
+    });
     dom.weatherEnabled.addEventListener("change", () => {
       updateSettings({ weatherEnabled: dom.weatherEnabled.value === "true" });
       updateWeather();
@@ -2500,6 +2731,9 @@
     dom.engineSettings.addEventListener("dragend", endDrag);
 
     dom.addCustomEngine.addEventListener("click", addCustomEngine);
+    [dom.customEngineName, dom.customEngineUrl, dom.customEnginePrefix, dom.customEngineShortcut].forEach((input) => {
+      input.addEventListener("input", () => validateCustomEngineForm(false));
+    });
     dom.customEngineList.addEventListener("click", (event) => {
       const id = event.target.closest("[data-remove-custom-engine]")?.dataset.removeCustomEngine;
       if (id) removeCustomEngine(id);
@@ -2576,6 +2810,16 @@
         dom.searchInput.focus();
       }
     });
+
+    const colorSchemeQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const handleColorSchemeChange = () => {
+      if (state.settings.themeMode === "auto") applyTheme();
+    };
+    if (colorSchemeQuery?.addEventListener) {
+      colorSchemeQuery.addEventListener("change", handleColorSchemeChange);
+    } else {
+      colorSchemeQuery?.addListener?.(handleColorSchemeChange);
+    }
 
     render();
     updateWeather();
