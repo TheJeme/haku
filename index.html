@@ -3,259 +3,1111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Haku - Simple search and weather app" />
-  <meta name="keywords" content="search, weather, clock, Haku" />
-  <meta name="author" content="Haku" />
-  <meta property="og:title" content="Haku" />
-  <meta property="og:description" content="A simple search and weather app with live time display" />
-  <meta property="og:image" content="favicon.ico" />
-  <meta property="og:url" content="https://yourwebsite.com" />
-  <link rel="icon" href="favicon.svg" type="image/x-icon" />
-  <title>Haku</title>
+  <meta name="application-name" content="Homepage" />
+  <meta name="apple-mobile-web-app-title" content="Homepage" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta name="theme-color" content="#e6ece4" />
+  <meta name="color-scheme" content="light" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Homepage" />
+  <meta property="og:title" content="Homepage" />
+  <meta property="og:description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta property="og:image" content="assets/app-icon.svg" />
+  <meta property="og:image:type" content="image/svg+xml" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Homepage" />
+  <meta name="twitter:description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta name="twitter:image" content="assets/app-icon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="mask-icon" href="assets/mask-icon.svg" color="#1f241f" />
+  <link rel="apple-touch-icon" href="assets/app-icon.svg" />
+  <title>Homepage</title>
   <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f6f1;
+      --paper-deep: #e6ece4;
+      --ink: #1f241f;
+      --muted: #687366;
+      --line: rgba(31, 36, 31, 0.14);
+      --line-strong: rgba(31, 36, 31, 0.28);
+      --surface: rgba(251, 252, 248, 0.74);
+      --surface-solid: #fbfcf8;
+      --shadow: 0 24px 80px rgba(35, 47, 37, 0.10);
+      --radius: 8px;
+    }
+
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
+
+    html {
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, var(--paper), var(--paper-deep));
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-size: 18px;
-      font-weight: 500;
-      line-height: 1.6;
-      background: linear-gradient(to bottom, #b8bbc0 0%, #b0b4ba 30%, #a1aab1 50%, #b0b4ba 70%, #b8bbc0 100%);
-      color: #000;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
       user-select: none;
-      text-align: center;
     }
-    input[type="text"] {
-      background-color: transparent;
-      padding: 10px;
-      font-size: 1.2em;
-      width: 300px;
-      border: 3px solid black;
-      outline: none;
-      border-radius: 0;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    a {
-      display: block;
-      color: black;
-      text-decoration: none;
-      text-decoration: underline;
-      padding: 10px;
-    }
-    a:hover {
-      background-color: black;
-      color: white;
-    }
-    p {
-      margin: 6px 0;
-    }
-    h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-    #forecast {
-      position: absolute;
-      top: 30px;
-      right: 30px;
-      border: 3px solid black;
-      padding: 30px;
-      text-align: center;
-      width: 300px;
-      height: 300px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      user-select: text;
-    }
-    #linksContainer {
-      position: absolute;
-      top: 30px;
-      left: 30px;
-      border: 3px solid black;
-      padding: 30px;
-      text-align: center;
-      width: 300px;
-      height: calc(100% - 60px);
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    #pixelContainer {
+
+    body::before {
+      content: "";
       position: fixed;
-      bottom: 30px;
-      right: 30px;
-      border: 3px solid black;
-      padding: 30px;
-      width: 300px;
-      height: 300px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      /* Make it clear the container is clickable */
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(31, 36, 31, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 36, 31, 0.018) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px 18px;
+    }
+
+    .settings-button {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 252, 248, 0.66);
+      display: grid;
+      place-items: center;
       cursor: pointer;
+      backdrop-filter: blur(16px);
+      transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+      z-index: 5;
     }
-    #pixelCanvas {
-      display: block;
+
+    .settings-button:hover {
+      border-color: var(--line-strong);
+      background: rgba(251, 252, 248, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .settings-button svg,
+    .icon-button svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+    }
+
+    .home {
+      width: min(720px, 100%);
+      display: grid;
+      gap: 26px;
+      justify-items: center;
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .clock-zone {
+      min-height: 148px;
+      display: grid;
+      place-items: center;
+    }
+
+    .digital-clock {
+      display: grid;
+      justify-items: center;
+      gap: 6px;
+    }
+
+    .time {
+      font-size: clamp(4rem, 14vw, 8.5rem);
+      font-weight: 300;
+      line-height: 0.9;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 0.88rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .analog-clock {
+      width: 132px;
+      aspect-ratio: 1;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      position: relative;
+      background: rgba(251, 252, 248, 0.42);
+      box-shadow: inset 0 0 0 8px rgba(251, 252, 248, 0.34);
+    }
+
+    .analog-clock::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ink);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    .tick {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1px;
+      height: 9px;
+      background: rgba(31, 36, 31, 0.42);
+      transform-origin: 50% -57px;
+    }
+
+    .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      width: 2px;
+      border-radius: 999px;
+      background: var(--ink);
+      transform-origin: 50% 100%;
+    }
+
+    .hand.hour {
+      height: 34px;
+    }
+
+    .hand.minute {
+      height: 48px;
+      background: rgba(31, 36, 31, 0.82);
+    }
+
+    .hand.second {
+      width: 1px;
+      height: 52px;
+      background: rgba(31, 36, 31, 0.44);
+    }
+
+    .search-card {
+      width: min(620px, 100%);
+      display: grid;
+      gap: 12px;
+    }
+
+    .engine-row {
+      min-height: 46px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .engine-button {
+      width: 44px;
+      height: 44px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      opacity: 0.52;
+      transition: border-color 160ms ease, background 160ms ease, opacity 160ms ease, transform 160ms ease;
+    }
+
+    .engine-button:hover,
+    .engine-button.is-active {
+      opacity: 1;
+      background: rgba(251, 252, 248, 0.54);
+      border-color: var(--line);
+    }
+
+    .engine-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .engine-button img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+      filter: saturate(0) brightness(0.2);
+    }
+
+    .search-form {
+      position: relative;
+      display: grid;
+    }
+
+    .search-form::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      pointer-events: none;
+    }
+
+    .search-input {
       width: 100%;
-      height: 100%;
+      min-height: 62px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0 64px 0 22px;
+      outline: none;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      font-size: clamp(1.05rem, 3vw, 1.32rem);
     }
-    .progress-bar-container {
-      position: fixed;
-      bottom: 0;
-      left: 0;
+
+    .search-input::placeholder {
+      color: rgba(31, 36, 31, 0.38);
+    }
+
+    .submit-button {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 252, 248, 0.82);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 160ms ease;
+    }
+
+    .submit-button:hover {
+      border-color: var(--line-strong);
+      transform: translateX(1px);
+    }
+
+    .quiet-row {
+      width: min(620px, 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .weather {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weather strong {
+      color: var(--ink);
+      font-weight: 560;
+    }
+
+    .weather-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(31, 36, 31, 0.34);
+    }
+
+    .links {
+      display: inline-flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .links a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+
+    .links a:hover {
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
+    dialog {
+      width: min(680px, calc(100vw - 28px));
+      max-height: min(760px, calc(100vh - 28px));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-solid);
+      color: var(--ink);
+      padding: 0;
+      box-shadow: 0 36px 120px rgba(30, 33, 29, 0.22);
+    }
+
+    dialog::backdrop {
+      background: rgba(31, 36, 31, 0.24);
+      backdrop-filter: blur(3px);
+    }
+
+    .settings {
+      display: grid;
+      max-height: inherit;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .settings-header,
+    .settings-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .settings-footer {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+      justify-content: flex-end;
+    }
+
+    .settings-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 620;
+    }
+
+    .settings-body {
+      overflow: auto;
+      padding: 20px 18px 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-title {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 680;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label.field {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .field input,
+    .field select {
       width: 100%;
-      height: 3px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(241, 244, 238, 0.76);
+      color: var(--ink);
+      padding: 0 11px;
+      outline: none;
     }
-    #progressBar {
-      height: 100%;
-      width: 0%;
-      background-color: black;
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--line-strong);
     }
-    #dayPercentage {
-      position: fixed;
-      bottom: 1px;
-      left: 1px;
-      font-size: 14px;
-      font-weight: bold;
-      color: black;
+
+    .engine-settings {
+      display: grid;
+      gap: 8px;
+    }
+
+    .engine-setting-row,
+    .link-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(241, 244, 238, 0.58);
+    }
+
+    .engine-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .engine-name img {
+      width: 18px;
+      height: 18px;
+      filter: saturate(0) brightness(0.25);
+    }
+
+    .check,
+    .radio {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--ink);
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .link-row {
+      grid-template-columns: 1fr 1.5fr auto;
+    }
+
+    .link-row input {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(251, 252, 248, 0.82);
+      padding: 0 10px;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .icon-button,
+    .text-button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 252, 248, 0.72);
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .icon-button {
+      width: 38px;
+      display: grid;
+      place-items: center;
+    }
+
+    .text-button {
+      padding: 0 15px;
+      color: var(--ink);
+    }
+
+    .icon-button:hover,
+    .text-button:hover {
+      border-color: var(--line-strong);
+      background: rgba(251, 252, 248, 0.96);
+    }
+
+    .danger {
+      color: #73372f;
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        align-items: start;
+        padding-top: 84px;
+      }
+
+      .clock-zone {
+        min-height: 126px;
+      }
+
+      .search-input {
+        min-height: 58px;
+        padding-left: 18px;
+      }
+
+      .field-grid,
+      .engine-setting-row,
+      .link-row {
+        grid-template-columns: 1fr;
+      }
+
+      .engine-setting-row {
+        justify-items: start;
+      }
+
+      .link-row {
+        gap: 8px;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>白</h1>
-    <input type="text" id="searchQuery" placeholder="Search..." autocomplete="off" onkeypress="handleSearch(event)" />
+  <button class="settings-button" id="openSettings" type="button" aria-label="Open settings" title="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2.05 2.05 0 0 1-2.9 2.9l-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21a2.05 2.05 0 0 1-4.1 0v-.09A1.7 1.7 0 0 0 8.8 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06a2.05 2.05 0 0 1-2.9-2.9l.06-.06A1.7 1.7 0 0 0 4.36 15a1.7 1.7 0 0 0-1.56-1.03H2.7a2.05 2.05 0 0 1 0-4.1h.1a1.7 1.7 0 0 0 1.56-1.03 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2.05 2.05 0 0 1 2.9-2.9l.06.06A1.7 1.7 0 0 0 8.8 4.4a1.7 1.7 0 0 0 1.03-1.56V2.75a2.05 2.05 0 0 1 4.1 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06a2.05 2.05 0 0 1 2.9 2.9l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03h.09a2.05 2.05 0 0 1 0 4.1h-.09A1.7 1.7 0 0 0 19.4 15Z" />
+    </svg>
+  </button>
+
+  <main class="shell">
+    <section class="home" aria-label="Haku">
+      <div class="mark">Home</div>
+
+      <div class="clock-zone" id="clockZone"></div>
+
+      <section class="search-card">
+        <div class="engine-row" id="engineRow" aria-label="Search engines"></div>
+        <form class="search-form" id="searchForm">
+          <input class="search-input" id="searchInput" type="search" placeholder="Search" autocomplete="off" spellcheck="false" autofocus />
+          <button class="submit-button" type="submit" aria-label="Search" title="Search">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <div class="quiet-row">
+        <div class="weather" id="weather" aria-live="polite"></div>
+        <nav class="links" id="links" aria-label="Links"></nav>
+      </div>
+    </section>
   </main>
 
-  <!-- Left-Side Links Container -->
-  <div id="linksContainer" style="display: none;"></div>
+  <dialog id="settingsDialog" aria-labelledby="settingsTitle">
+    <form method="dialog" class="settings">
+      <header class="settings-header">
+        <h2 class="settings-title" id="settingsTitle">Settings</h2>
+        <button class="icon-button" value="close" aria-label="Close settings" title="Close" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </header>
 
-  <!-- Forecast Container -->
-  <div id="forecast" style="display: none;"></div>
+      <div class="settings-body">
+        <section class="section">
+          <h3 class="section-title">Clock</h3>
+          <div class="field-grid">
+            <label class="field">
+              Mode
+              <select id="clockMode">
+                <option value="digital">Digital</option>
+                <option value="analog">Analog</option>
+              </select>
+            </label>
+            <label class="field">
+              Time format
+              <select id="timeFormat">
+                <option value="24">24 hour</option>
+                <option value="12">12 hour</option>
+              </select>
+            </label>
+          </div>
+        </section>
 
-  <div class="progress-bar-container">
-    <div id="progressBar"></div>
-  </div>
+        <section class="section">
+          <h3 class="section-title">Search</h3>
+          <div class="engine-settings" id="engineSettings"></div>
+        </section>
 
-  <div id="dayPercentage"></div>
+        <section class="section">
+          <h3 class="section-title">Weather</h3>
+          <div class="field-grid">
+            <label class="field">
+              City
+              <input id="weatherCity" type="text" autocomplete="address-level2" placeholder="City" />
+            </label>
+            <label class="field">
+              Units
+              <select id="weatherUnits">
+                <option value="celsius">Celsius</option>
+                <option value="fahrenheit">Fahrenheit</option>
+              </select>
+            </label>
+          </div>
+        </section>
 
-  <!-- Pixel Grid Container (Bottom Right) -->
-  <div id="pixelContainer">
-    <canvas id="pixelCanvas" width="270" height="270"></canvas>
-  </div>
+        <section class="section">
+          <h3 class="section-title">Links</h3>
+          <div class="link-list" id="linkList"></div>
+          <button class="text-button" id="addLink" type="button">Add link</button>
+        </section>
+      </div>
+
+      <footer class="settings-footer">
+        <button class="text-button danger" id="resetSettings" type="button">Reset</button>
+        <button class="text-button" value="close" type="submit">Done</button>
+      </footer>
+    </form>
+  </dialog>
 
   <script>
-    async function loadConfig() {
-      try {
-        const response = await fetch('config.json');
-        const config = await response.json();
-        return config;
-      } catch (error) {
-        console.error('Error loading config:', error);
-        return null;
+    const STORAGE_KEY = "homepage.settings.v1";
+    const LEGACY_STORAGE_KEY = "haku.settings.v2";
+
+    const ENGINES = {
+      google: {
+        name: "Google",
+        icon: "assets/google.svg",
+        url: "https://www.google.com/search?q={query}"
+      },
+      bing: {
+        name: "Bing",
+        icon: "assets/bing.svg",
+        url: "https://www.bing.com/search?q={query}"
+      },
+      duckduckgo: {
+        name: "DuckDuckGo",
+        icon: "assets/duckduckgo.svg",
+        url: "https://duckduckgo.com/?q={query}"
+      },
+      youtube: {
+        name: "YouTube",
+        icon: "assets/youtube.svg",
+        url: "https://www.youtube.com/results?search_query={query}"
+      },
+      reddit: {
+        name: "Reddit",
+        icon: "assets/reddit.svg",
+        url: "https://www.reddit.com/search/?q={query}"
       }
+    };
+
+    const DEFAULT_SETTINGS = {
+      activeEngine: "google",
+      defaultEngine: "google",
+      enabledEngines: ["google", "duckduckgo", "youtube", "reddit"],
+      clockMode: "digital",
+      timeFormat: "24",
+      weatherCity: "",
+      weatherUnits: "celsius",
+      links: [
+        { name: "Mail", url: "https://mail.google.com" },
+        { name: "Calendar", url: "https://calendar.google.com" },
+        { name: "GitHub", url: "https://github.com" }
+      ]
+    };
+
+    const state = {
+      settings: loadSettings(),
+      weatherAbort: null
+    };
+
+    const dom = {
+      clockZone: document.getElementById("clockZone"),
+      engineRow: document.getElementById("engineRow"),
+      searchForm: document.getElementById("searchForm"),
+      searchInput: document.getElementById("searchInput"),
+      weather: document.getElementById("weather"),
+      links: document.getElementById("links"),
+      openSettings: document.getElementById("openSettings"),
+      settingsDialog: document.getElementById("settingsDialog"),
+      clockMode: document.getElementById("clockMode"),
+      timeFormat: document.getElementById("timeFormat"),
+      engineSettings: document.getElementById("engineSettings"),
+      weatherCity: document.getElementById("weatherCity"),
+      weatherUnits: document.getElementById("weatherUnits"),
+      linkList: document.getElementById("linkList"),
+      addLink: document.getElementById("addLink"),
+      resetSettings: document.getElementById("resetSettings")
+    };
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (!raw) return cloneDefaults();
+        const parsed = JSON.parse(raw);
+        const merged = { ...DEFAULT_SETTINGS, ...parsed };
+        merged.enabledEngines = sanitizeEnabledEngines(merged.enabledEngines);
+        merged.defaultEngine = ENGINES[merged.defaultEngine] ? merged.defaultEngine : "google";
+        merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
+        if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
+        if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
+        merged.links = sanitizeLinks(merged.links);
+        return merged;
+      } catch {
+        return cloneDefaults();
+      }
+    }
+
+    function cloneDefaults() {
+      return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    }
+
+    function saveSettings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
+    }
+
+    function sanitizeEnabledEngines(value) {
+      const list = Array.isArray(value) ? value.filter((key) => ENGINES[key]) : [];
+      return list.length ? Array.from(new Set(list)) : ["google"];
+    }
+
+    function sanitizeLinks(value) {
+      if (!Array.isArray(value)) return [];
+      return value
+        .map((link) => ({
+          name: String(link.name || "").trim(),
+          url: String(link.url || "").trim()
+        }))
+        .filter((link) => link.name && isSafeUrl(link.url));
+    }
+
+    function isSafeUrl(value) {
+      try {
+        const url = new URL(value);
+        return url.protocol === "https:" || url.protocol === "http:";
+      } catch {
+        return false;
+      }
+    }
+
+    function updateSettings(next) {
+      state.settings = { ...state.settings, ...next };
+      state.settings.enabledEngines = sanitizeEnabledEngines(state.settings.enabledEngines);
+      if (!state.settings.enabledEngines.includes(state.settings.defaultEngine)) {
+        state.settings.defaultEngine = state.settings.enabledEngines[0];
+      }
+      if (!state.settings.enabledEngines.includes(state.settings.activeEngine)) {
+        state.settings.activeEngine = state.settings.defaultEngine;
+      }
+      saveSettings();
+      render();
+    }
+
+    function render() {
+      renderClock();
+      renderEngines();
+      renderLinks();
+      renderSettings();
+    }
+
+    function renderClock() {
+      if (state.settings.clockMode === "analog") {
+        dom.clockZone.innerHTML = `
+          <div class="analog-clock" aria-label="Analog clock">
+            ${Array.from({ length: 12 }, (_, index) => `<span class="tick" style="transform: rotate(${index * 30}deg) translateX(-50%);"></span>`).join("")}
+            <span class="hand hour" id="hourHand"></span>
+            <span class="hand minute" id="minuteHand"></span>
+            <span class="hand second" id="secondHand"></span>
+          </div>
+        `;
+      } else {
+        dom.clockZone.innerHTML = `
+          <div class="digital-clock" aria-live="polite">
+            <div class="time" id="timeText"></div>
+            <div class="date" id="dateText"></div>
+          </div>
+        `;
+      }
+      updateClock();
+    }
+
+    function updateClock() {
+      const now = new Date();
+
+      if (state.settings.clockMode === "analog") {
+        const second = now.getSeconds();
+        const minute = now.getMinutes() + second / 60;
+        const hour = (now.getHours() % 12) + minute / 60;
+        document.getElementById("hourHand").style.transform = `translateX(-50%) rotate(${hour * 30}deg)`;
+        document.getElementById("minuteHand").style.transform = `translateX(-50%) rotate(${minute * 6}deg)`;
+        document.getElementById("secondHand").style.transform = `translateX(-50%) rotate(${second * 6}deg)`;
+        return;
+      }
+
+      const hour12 = state.settings.timeFormat === "12";
+      document.getElementById("timeText").textContent = new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12
+      }).format(now);
+      document.getElementById("dateText").textContent = new Intl.DateTimeFormat(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric"
+      }).format(now);
+    }
+
+    function renderEngines() {
+      const active = state.settings.activeEngine;
+      dom.engineRow.innerHTML = state.settings.enabledEngines.map((key) => {
+        const engine = ENGINES[key];
+        const selected = key === active ? " is-active" : "";
+        return `
+          <button class="engine-button${selected}" type="button" data-engine="${key}" aria-label="${engine.name}" title="${engine.name}">
+            <img src="${engine.icon}" alt="" />
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderLinks() {
+      const links = sanitizeLinks(state.settings.links);
+      dom.links.innerHTML = links.map((link) => `<a href="${escapeAttribute(link.url)}">${escapeHtml(link.name)}</a>`).join("");
+    }
+
+    function renderSettings() {
+      dom.clockMode.value = state.settings.clockMode;
+      dom.timeFormat.value = state.settings.timeFormat;
+      dom.weatherCity.value = state.settings.weatherCity;
+      dom.weatherUnits.value = state.settings.weatherUnits;
+
+      dom.engineSettings.innerHTML = Object.entries(ENGINES).map(([key, engine]) => {
+        const enabled = state.settings.enabledEngines.includes(key);
+        const checked = enabled ? "checked" : "";
+        const defaulted = state.settings.defaultEngine === key ? "checked" : "";
+        const disabled = enabled ? "" : "disabled";
+        return `
+          <div class="engine-setting-row">
+            <label class="engine-name">
+              <input class="check" type="checkbox" data-engine-enabled="${key}" ${checked} />
+              <img src="${engine.icon}" alt="" />
+              ${engine.name}
+            </label>
+            <span></span>
+            <span class="mini-label">Default</span>
+            <input class="radio" type="radio" name="defaultEngine" value="${key}" ${defaulted} ${disabled} aria-label="Default ${engine.name}" />
+          </div>
+        `;
+      }).join("");
+
+      dom.linkList.innerHTML = state.settings.links.map((link, index) => `
+        <div class="link-row">
+          <input type="text" value="${escapeAttribute(link.name)}" data-link-name="${index}" aria-label="Link name" />
+          <input type="url" value="${escapeAttribute(link.url)}" data-link-url="${index}" aria-label="Link URL" />
+          <button class="icon-button" type="button" data-remove-link="${index}" aria-label="Remove link" title="Remove">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+      `).join("");
     }
 
     async function updateWeather() {
-      const config = await loadConfig();
-      if (!config) return;
-      
+      const city = getWeatherCity();
+      if (!city) {
+        dom.weather.textContent = "";
+        return;
+      }
+
+      if (state.weatherAbort) state.weatherAbort.abort();
+      state.weatherAbort = new AbortController();
+      dom.weather.innerHTML = `<span class="weather-dot"></span><span>${escapeHtml(city)}</span>`;
+
       try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${config.CITY}&appid=${config.WEATHER_API_KEY}&units=metric`);
-        const data = await response.json();
-        
-        const forecastContainer = document.getElementById('forecast');
-        forecastContainer.innerHTML = `<h2>${config.CITY}</h2>`;
-        forecastContainer.style.display = 'block';
+        const geocodeUrl = new URL("https://geocoding-api.open-meteo.com/v1/search");
+        geocodeUrl.searchParams.set("name", city);
+        geocodeUrl.searchParams.set("count", "1");
+        geocodeUrl.searchParams.set("language", "en");
+        geocodeUrl.searchParams.set("format", "json");
+        const geocodeResponse = await fetch(geocodeUrl, { signal: state.weatherAbort.signal });
+        const geocode = await geocodeResponse.json();
+        const place = geocode.results?.[0];
+        if (!place) throw new Error("Location not found");
 
-        data.list.forEach((item, index) => {
-          if (index % 8 === 0) {
-            const date = new Date(item.dt * 1000);
-            let dayIndex = date.getDay();
-            dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
-            const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-            const formattedDate = `${days[dayIndex]} ${date.getDate()}.${date.getMonth() + 1}`;
-            forecastContainer.innerHTML += `<p>${formattedDate}: ${Math.round(item.main.temp)}°C</p>`;
-          }
-        });
+        const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
+        weatherUrl.searchParams.set("latitude", place.latitude);
+        weatherUrl.searchParams.set("longitude", place.longitude);
+        weatherUrl.searchParams.set("current", "temperature_2m,weather_code");
+        weatherUrl.searchParams.set("temperature_unit", state.settings.weatherUnits);
+        weatherUrl.searchParams.set("timezone", "auto");
+        const weatherResponse = await fetch(weatherUrl, { signal: state.weatherAbort.signal });
+        const weather = await weatherResponse.json();
+        const unit = state.settings.weatherUnits === "fahrenheit" ? "F" : "C";
+        const temperature = Math.round(weather.current.temperature_2m);
+
+        dom.weather.innerHTML = `
+          <span class="weather-dot"></span>
+          <span><strong>${temperature}&deg;${unit}</strong> ${escapeHtml(place.name)}</span>
+        `;
       } catch (error) {
-        console.log('Error loading forecast:', error);
+        if (error.name === "AbortError") return;
+        dom.weather.innerHTML = `<span class="weather-dot"></span><span>${escapeHtml(city)}</span>`;
       }
     }
 
-    function handleSearch(event) {
-      if (event.key === 'Enter') {
-        const query = event.target.value.trim();
-        if (query) {
-          window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        }
-      }
+    function getWeatherCity() {
+      const saved = state.settings.weatherCity.trim();
+      if (saved) return saved;
+
+      const zone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const lastSegment = zone.split("/").pop() || "";
+      return lastSegment.replace(/_/g, " ");
     }
 
-    function updateProgressBar() {
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-      const progress = ((now - startOfDay) / (endOfDay - startOfDay)) * 100;
-      document.getElementById('progressBar').style.width = `${progress}%`;
-      document.getElementById('dayPercentage').textContent = `${Math.round(progress)}%`;
+    function search(query) {
+      const key = state.settings.activeEngine;
+      const engine = ENGINES[key] || ENGINES.google;
+      const encoded = encodeURIComponent(query);
+      window.location.href = engine.url.replace("{query}", encoded);
     }
 
-    function drawPixelGrid() {
-      const canvas = document.getElementById('pixelCanvas');
-      const ctx = canvas.getContext('2d');
-      const gridCount = 9; // 9x9 grid
-      const cellWidth = 30;
-      const cellHeight = 30;
-      
-      for (let row = 0; row < gridCount; row++) {
-        for (let col = 0; col < gridCount; col++) {
-          // Randomly select black or transparent
-          ctx.fillStyle = Math.random() < 0.5 ? 'black' : 'transparent';
-          ctx.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
-        }
-      }
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
     }
 
-    async function updateLinks() {
-      const config = await loadConfig();
-      if (!config || !config.LINKS) return;
-
-      const linksContainer = document.getElementById('linksContainer');
-      let html = '<h2>Links</h2>';
-      config.LINKS.forEach(link => {
-        html += `<a href="${link.url}">${link.name}</a>`;
-      });
-      linksContainer.innerHTML = html;
-      linksContainer.style.display = 'block';
+    function escapeAttribute(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
     }
 
-    // Updated event listener: copy the canvas as PNG to the clipboard
-    document.getElementById('pixelContainer').addEventListener('click', function() {
-      const canvas = document.getElementById('pixelCanvas');
-      // Convert the canvas to a blob in PNG format
-      canvas.toBlob(blob => {
-        if (blob) {
-          const item = new ClipboardItem({ "image/png": blob });
-          navigator.clipboard.write([item]);
-        } else {
-          console.error("Failed to convert canvas to blob.");
-        }
-      }, 'image/png');
+    dom.searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = dom.searchInput.value.trim();
+      if (query) search(query);
     });
 
-    // Initialize functions
+    dom.engineRow.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-engine]");
+      if (!button) return;
+      updateSettings({ activeEngine: button.dataset.engine });
+      dom.searchInput.focus();
+    });
+
+    dom.openSettings.addEventListener("click", () => {
+      if (typeof dom.settingsDialog.showModal === "function") {
+        dom.settingsDialog.showModal();
+      } else {
+        dom.settingsDialog.setAttribute("open", "");
+      }
+    });
+
+    dom.clockMode.addEventListener("change", () => updateSettings({ clockMode: dom.clockMode.value }));
+    dom.timeFormat.addEventListener("change", () => updateSettings({ timeFormat: dom.timeFormat.value }));
+    dom.weatherUnits.addEventListener("change", () => {
+      updateSettings({ weatherUnits: dom.weatherUnits.value });
+      updateWeather();
+    });
+    dom.weatherCity.addEventListener("change", () => {
+      updateSettings({ weatherCity: dom.weatherCity.value.trim() });
+      updateWeather();
+    });
+
+    dom.engineSettings.addEventListener("change", (event) => {
+      const enabledKey = event.target.dataset.engineEnabled;
+      if (enabledKey) {
+        const enabled = new Set(state.settings.enabledEngines);
+        if (event.target.checked) {
+          enabled.add(enabledKey);
+        } else if (enabled.size > 1) {
+          enabled.delete(enabledKey);
+        } else {
+          event.target.checked = true;
+        }
+        updateSettings({ enabledEngines: Array.from(enabled) });
+      }
+
+      if (event.target.name === "defaultEngine") {
+        updateSettings({ defaultEngine: event.target.value, activeEngine: event.target.value });
+      }
+    });
+
+    dom.linkList.addEventListener("input", (event) => {
+      const nameIndex = event.target.dataset.linkName;
+      const urlIndex = event.target.dataset.linkUrl;
+      const links = [...state.settings.links];
+
+      if (nameIndex !== undefined) links[Number(nameIndex)].name = event.target.value;
+      if (urlIndex !== undefined) links[Number(urlIndex)].url = event.target.value;
+
+      state.settings.links = links;
+      saveSettings();
+      renderLinks();
+    });
+
+    dom.linkList.addEventListener("click", (event) => {
+      const index = event.target.closest("[data-remove-link]")?.dataset.removeLink;
+      if (index === undefined) return;
+      const links = state.settings.links.filter((_, linkIndex) => linkIndex !== Number(index));
+      updateSettings({ links });
+    });
+
+    dom.addLink.addEventListener("click", () => {
+      const links = [...state.settings.links, { name: "New", url: "https://" }];
+      updateSettings({ links });
+    });
+
+    dom.resetSettings.addEventListener("click", () => {
+      state.settings = cloneDefaults();
+      saveSettings();
+      render();
+      updateWeather();
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "/" && document.activeElement !== dom.searchInput && !dom.settingsDialog.open) {
+        event.preventDefault();
+        dom.searchInput.focus();
+      }
+    });
+
+    render();
     updateWeather();
-    updateProgressBar();
-    drawPixelGrid();
-    updateLinks();
-    setInterval(updateProgressBar, 60000);
+    setInterval(updateClock, 1000);
+    setInterval(updateWeather, 30 * 60 * 1000);
   </script>
 </body>
 </html>
