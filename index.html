@@ -332,6 +332,7 @@
 
     .search-card {
       width: min(620px, 100%);
+      position: relative;
       display: grid;
       gap: 12px;
     }
@@ -369,7 +370,11 @@
     }
 
     .suggestion-menu {
-      margin-top: 8px;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      z-index: 4;
       padding: 6px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
