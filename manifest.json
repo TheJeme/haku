@@ -1,7 +1,7 @@
 {
-  "name": "Homepage",
-  "short_name": "Home",
-  "description": "A quiet browser homepage with search, clock, weather, and links.",
+  "name": "Haku",
+  "short_name": "Haku",
+  "description": "Haku is a quiet browser homepage with search, clock, weather, and links.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

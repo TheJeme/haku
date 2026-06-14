@@ -3,31 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="application-name" content="Homepage" />
-  <meta name="apple-mobile-web-app-title" content="Homepage" />
+  <meta name="application-name" content="Haku" />
+  <meta name="apple-mobile-web-app-title" content="Haku" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta name="description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
   <meta name="theme-color" content="#e6ece4" />
   <meta name="color-scheme" content="light" />
   <meta name="robots" content="index, follow" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Homepage" />
-  <meta property="og:title" content="Homepage" />
-  <meta property="og:description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta property="og:site_name" content="Haku" />
+  <meta property="og:title" content="Haku" />
+  <meta property="og:description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
   <meta property="og:image" content="assets/app-icon.svg" />
   <meta property="og:image:type" content="image/svg+xml" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Homepage" />
-  <meta name="twitter:description" content="A quiet browser homepage with search, clock, weather, and links." />
+  <meta name="twitter:title" content="Haku" />
+  <meta name="twitter:description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
   <meta name="twitter:image" content="assets/app-icon.svg" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-  <link rel="alternate icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
   <link rel="mask-icon" href="assets/mask-icon.svg" color="#1f241f" />
   <link rel="apple-touch-icon" href="assets/app-icon.svg" />
-  <title>Homepage</title>
+  <title>Haku</title>
   <style>
     :root {
       color-scheme: light;
@@ -168,106 +168,84 @@
     }
 
     .analog-clock {
-      width: 132px;
+      width: clamp(140px, 24vw, 168px);
       aspect-ratio: 1;
-      border: 1px solid var(--line-strong);
-      border-radius: 50%;
-      position: relative;
-      background: rgba(251, 252, 248, 0.42);
-      box-shadow: inset 0 0 0 8px rgba(251, 252, 248, 0.34);
+      display: block;
+      overflow: visible;
     }
 
-    .analog-clock::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--ink);
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 3;
+    .clock-face {
+      fill: rgba(251, 252, 248, 0.42);
+      stroke: var(--line-strong);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
     }
 
     .tick {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 1px;
-      height: 9px;
-      background: rgba(31, 36, 31, 0.42);
-      transform-origin: 50% -57px;
+      stroke: rgba(31, 36, 31, 0.42);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .tick.major {
+      stroke: rgba(31, 36, 31, 0.62);
+      stroke-width: 2.2;
     }
 
     .hand {
-      position: absolute;
-      left: 50%;
-      bottom: 50%;
-      width: 2px;
-      border-radius: 999px;
-      background: var(--ink);
-      transform-origin: 50% 100%;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .hand.hour,
+    .hand.minute {
+      stroke: var(--ink);
     }
 
     .hand.hour {
-      height: 34px;
+      stroke-width: 5.6;
     }
 
     .hand.minute {
-      height: 48px;
-      background: rgba(31, 36, 31, 0.82);
+      stroke-width: 3.8;
+      opacity: 0.82;
     }
 
     .hand.second {
-      width: 1px;
-      height: 52px;
-      background: rgba(31, 36, 31, 0.44);
+      stroke: rgba(31, 36, 31, 0.44);
+      stroke-width: 1.8;
+    }
+
+    .hand-tail {
+      opacity: 0.5;
+    }
+
+    .clock-number {
+      fill: rgba(31, 36, 31, 0.62);
+      font-size: 15px;
+      font-weight: 560;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+    }
+
+    .clock-pin {
+      fill: var(--ink);
+    }
+
+    .clock-pin-ring {
+      fill: rgba(251, 252, 248, 0.92);
+      stroke: var(--ink);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
     }
 
     .search-card {
       width: min(620px, 100%);
       display: grid;
       gap: 12px;
-    }
-
-    .engine-row {
-      min-height: 46px;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .engine-button {
-      width: 44px;
-      height: 44px;
-      border: 1px solid transparent;
-      border-radius: 999px;
-      background: transparent;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      opacity: 0.52;
-      transition: border-color 160ms ease, background 160ms ease, opacity 160ms ease, transform 160ms ease;
-    }
-
-    .engine-button:hover,
-    .engine-button.is-active {
-      opacity: 1;
-      background: rgba(251, 252, 248, 0.54);
-      border-color: var(--line);
-    }
-
-    .engine-button:hover {
-      transform: translateY(-1px);
-    }
-
-    .engine-button img {
-      width: 19px;
-      height: 19px;
-      object-fit: contain;
-      filter: saturate(0) brightness(0.2);
     }
 
     .search-form {
@@ -291,7 +269,7 @@
       border-radius: var(--radius);
       background: var(--surface);
       color: var(--ink);
-      padding: 0 64px 0 22px;
+      padding: 0 64px 0 72px;
       outline: none;
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
@@ -300,6 +278,90 @@
 
     .search-input::placeholder {
       color: rgba(31, 36, 31, 0.38);
+    }
+
+    .engine-picker {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      z-index: 2;
+    }
+
+    .engine-picker-button {
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 252, 248, 0.82);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+    }
+
+    .engine-picker-button:hover,
+    .engine-picker-button[aria-expanded="true"] {
+      border-color: var(--line-strong);
+      background: rgba(251, 252, 248, 0.96);
+    }
+
+    .engine-picker-button[aria-expanded="true"] {
+      transform: translateY(-1px);
+    }
+
+    .engine-picker-button img,
+    .engine-option img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+      filter: saturate(0) brightness(0.22);
+    }
+
+    .engine-menu {
+      position: absolute;
+      left: 0;
+      top: 54px;
+      width: 210px;
+      max-height: 282px;
+      overflow: auto;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-solid);
+      box-shadow: 0 18px 60px rgba(35, 47, 37, 0.14);
+      display: grid;
+      gap: 2px;
+    }
+
+    .engine-menu[hidden] {
+      display: none;
+    }
+
+    .engine-option {
+      width: 100%;
+      min-height: 40px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .engine-option:hover,
+    .engine-option.is-active {
+      background: rgba(31, 36, 31, 0.06);
+    }
+
+    .engine-option span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.9rem;
     }
 
     .submit-button {
@@ -574,7 +636,7 @@
 
       .search-input {
         min-height: 58px;
-        padding-left: 18px;
+        padding-left: 66px;
       }
 
       .field-grid,
@@ -603,13 +665,18 @@
 
   <main class="shell">
     <section class="home" aria-label="Haku">
-      <div class="mark">Home</div>
+      <div class="mark">Haku</div>
 
       <div class="clock-zone" id="clockZone"></div>
 
       <section class="search-card">
-        <div class="engine-row" id="engineRow" aria-label="Search engines"></div>
         <form class="search-form" id="searchForm">
+          <div class="engine-picker" id="enginePicker">
+            <button class="engine-picker-button" id="enginePickerButton" type="button" aria-label="Choose search engine" aria-haspopup="listbox" aria-expanded="false">
+              <img id="enginePickerIcon" src="assets/google.svg" alt="" />
+            </button>
+            <div class="engine-menu" id="engineMenu" role="listbox" aria-label="Search engines" hidden></div>
+          </div>
           <input class="search-input" id="searchInput" type="search" placeholder="Search" autocomplete="off" spellcheck="false" autofocus />
           <button class="submit-button" type="submit" aria-label="Search" title="Search">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -647,7 +714,7 @@
               Mode
               <select id="clockMode">
                 <option value="digital">Digital</option>
-                <option value="analog">Analog</option>
+                <option value="analog">Manual</option>
               </select>
             </label>
             <label class="field">
@@ -697,8 +764,8 @@
   </dialog>
 
   <script>
-    const STORAGE_KEY = "homepage.settings.v1";
-    const LEGACY_STORAGE_KEY = "haku.settings.v2";
+    const STORAGE_KEY = "haku.settings.v3";
+    const LEGACY_STORAGE_KEYS = ["haku.settings.v2", "homepage.settings.v1"];
 
     const ENGINES = {
       google: {
@@ -711,10 +778,35 @@
         icon: "assets/bing.svg",
         url: "https://www.bing.com/search?q={query}"
       },
+      brave: {
+        name: "Brave",
+        icon: "assets/brave.svg",
+        url: "https://search.brave.com/search?q={query}"
+      },
       duckduckgo: {
         name: "DuckDuckGo",
         icon: "assets/duckduckgo.svg",
         url: "https://duckduckgo.com/?q={query}"
+      },
+      ecosia: {
+        name: "Ecosia",
+        icon: "assets/ecosia.svg",
+        url: "https://www.ecosia.org/search?q={query}"
+      },
+      startpage: {
+        name: "Startpage",
+        icon: "assets/startpage.svg",
+        url: "https://www.startpage.com/sp/search?query={query}"
+      },
+      kagi: {
+        name: "Kagi",
+        icon: "assets/kagi.svg",
+        url: "https://kagi.com/search?q={query}"
+      },
+      yandex: {
+        name: "Yandex",
+        icon: "assets/yandex.svg",
+        url: "https://yandex.com/search/?text={query}"
       },
       youtube: {
         name: "YouTube",
@@ -725,6 +817,16 @@
         name: "Reddit",
         icon: "assets/reddit.svg",
         url: "https://www.reddit.com/search/?q={query}"
+      },
+      wikipedia: {
+        name: "Wikipedia",
+        icon: "assets/wikipedia.svg",
+        url: "https://en.wikipedia.org/w/index.php?search={query}"
+      },
+      github: {
+        name: "GitHub",
+        icon: "assets/github.svg",
+        url: "https://github.com/search?q={query}"
       }
     };
 
@@ -750,7 +852,10 @@
 
     const dom = {
       clockZone: document.getElementById("clockZone"),
-      engineRow: document.getElementById("engineRow"),
+      enginePicker: document.getElementById("enginePicker"),
+      enginePickerButton: document.getElementById("enginePickerButton"),
+      enginePickerIcon: document.getElementById("enginePickerIcon"),
+      engineMenu: document.getElementById("engineMenu"),
       searchForm: document.getElementById("searchForm"),
       searchInput: document.getElementById("searchInput"),
       weather: document.getElementById("weather"),
@@ -769,7 +874,7 @@
 
     function loadSettings() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || LEGACY_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
         if (!raw) return cloneDefaults();
         const parsed = JSON.parse(raw);
         const merged = { ...DEFAULT_SETTINGS, ...parsed };
@@ -839,14 +944,7 @@
 
     function renderClock() {
       if (state.settings.clockMode === "analog") {
-        dom.clockZone.innerHTML = `
-          <div class="analog-clock" aria-label="Analog clock">
-            ${Array.from({ length: 12 }, (_, index) => `<span class="tick" style="transform: rotate(${index * 30}deg) translateX(-50%);"></span>`).join("")}
-            <span class="hand hour" id="hourHand"></span>
-            <span class="hand minute" id="minuteHand"></span>
-            <span class="hand second" id="secondHand"></span>
-          </div>
-        `;
+        dom.clockZone.innerHTML = renderManualClock();
       } else {
         dom.clockZone.innerHTML = `
           <div class="digital-clock" aria-live="polite">
@@ -858,16 +956,78 @@
       updateClock();
     }
 
+    function renderManualClock() {
+      return `
+          <svg class="analog-clock" viewBox="0 0 200 200" aria-labelledby="manualClockTitle" role="img">
+          <title id="manualClockTitle">Manual clock</title>
+          <circle class="clock-face" cx="100" cy="100" r="94" />
+          ${renderClockTicks()}
+          <text class="clock-number" x="100" y="38">12</text>
+          <text class="clock-number" x="162" y="101">3</text>
+          <text class="clock-number" x="100" y="164">6</text>
+          <text class="clock-number" x="38" y="101">9</text>
+          <line class="hand hand-tail hour" id="hourTail" x1="100" y1="100" x2="100" y2="113" />
+          <line class="hand hour" id="hourHand" x1="100" y1="100" x2="100" y2="62" />
+          <line class="hand hand-tail minute" id="minuteTail" x1="100" y1="100" x2="100" y2="118" />
+          <line class="hand minute" id="minuteHand" x1="100" y1="100" x2="100" y2="42" />
+          <line class="hand second" id="secondHand" x1="100" y1="116" x2="100" y2="34" />
+          <circle class="clock-pin-ring" cx="100" cy="100" r="6.5" />
+          <circle class="clock-pin" cx="100" cy="100" r="3.2" />
+        </svg>
+      `;
+    }
+
+    function renderClockTicks() {
+      return Array.from({ length: 60 }, (_, index) => {
+        const isHour = index % 5 === 0;
+        const outer = pointOnClock(index * 6, 88);
+        const inner = pointOnClock(index * 6, isHour ? 77 : 83);
+        const className = isHour ? "tick major" : "tick";
+        return `<line class="${className}" x1="${outer.x}" y1="${outer.y}" x2="${inner.x}" y2="${inner.y}" />`;
+      }).join("");
+    }
+
+    function pointOnClock(angle, radius) {
+      const radians = (angle - 90) * Math.PI / 180;
+      return {
+        x: (100 + Math.cos(radians) * radius).toFixed(2),
+        y: (100 + Math.sin(radians) * radius).toFixed(2)
+      };
+    }
+
     function updateClock() {
       const now = new Date();
 
       if (state.settings.clockMode === "analog") {
-        const second = now.getSeconds();
+        const second = now.getSeconds() + now.getMilliseconds() / 1000;
         const minute = now.getMinutes() + second / 60;
         const hour = (now.getHours() % 12) + minute / 60;
-        document.getElementById("hourHand").style.transform = `translateX(-50%) rotate(${hour * 30}deg)`;
-        document.getElementById("minuteHand").style.transform = `translateX(-50%) rotate(${minute * 6}deg)`;
-        document.getElementById("secondHand").style.transform = `translateX(-50%) rotate(${second * 6}deg)`;
+        const hourAngle = hour * 30;
+        const minuteAngle = minute * 6;
+        const secondAngle = second * 6;
+        const manualTitle = document.getElementById("manualClockTitle");
+        const hourHand = document.getElementById("hourHand");
+        const hourTail = document.getElementById("hourTail");
+        const minuteHand = document.getElementById("minuteHand");
+        const minuteTail = document.getElementById("minuteTail");
+        const secondHand = document.getElementById("secondHand");
+
+        if (!hourHand || !hourTail || !minuteHand || !minuteTail || !secondHand) return;
+
+        hourHand.setAttribute("transform", `rotate(${hourAngle} 100 100)`);
+        hourTail.setAttribute("transform", `rotate(${hourAngle} 100 100)`);
+        minuteHand.setAttribute("transform", `rotate(${minuteAngle} 100 100)`);
+        minuteTail.setAttribute("transform", `rotate(${minuteAngle} 100 100)`);
+        secondHand.setAttribute("transform", `rotate(${secondAngle} 100 100)`);
+
+        if (manualTitle) {
+          manualTitle.textContent = new Intl.DateTimeFormat(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: state.settings.timeFormat === "12"
+          }).format(now);
+        }
         return;
       }
 
@@ -886,12 +1046,17 @@
 
     function renderEngines() {
       const active = state.settings.activeEngine;
-      dom.engineRow.innerHTML = state.settings.enabledEngines.map((key) => {
+      const activeEngine = ENGINES[active] || ENGINES.google;
+      dom.enginePickerIcon.src = activeEngine.icon;
+      dom.enginePickerButton.title = activeEngine.name;
+      dom.enginePickerButton.setAttribute("aria-label", `Search with ${activeEngine.name}`);
+      dom.engineMenu.innerHTML = state.settings.enabledEngines.map((key) => {
         const engine = ENGINES[key];
         const selected = key === active ? " is-active" : "";
         return `
-          <button class="engine-button${selected}" type="button" data-engine="${key}" aria-label="${engine.name}" title="${engine.name}">
+          <button class="engine-option${selected}" type="button" role="option" data-engine="${key}" aria-selected="${key === active}">
             <img src="${engine.icon}" alt="" />
+            <span>${engine.name}</span>
           </button>
         `;
       }).join("");
@@ -1020,11 +1185,26 @@
       if (query) search(query);
     });
 
-    dom.engineRow.addEventListener("click", (event) => {
+    function setEngineMenuOpen(open) {
+      dom.engineMenu.hidden = !open;
+      dom.enginePickerButton.setAttribute("aria-expanded", String(open));
+    }
+
+    dom.enginePickerButton.addEventListener("click", () => {
+      setEngineMenuOpen(dom.enginePickerButton.getAttribute("aria-expanded") !== "true");
+    });
+
+    dom.engineMenu.addEventListener("click", (event) => {
       const button = event.target.closest("[data-engine]");
       if (!button) return;
       updateSettings({ activeEngine: button.dataset.engine });
+      setEngineMenuOpen(false);
       dom.searchInput.focus();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (dom.enginePicker.contains(event.target)) return;
+      setEngineMenuOpen(false);
     });
 
     dom.openSettings.addEventListener("click", () => {
@@ -1098,6 +1278,10 @@
     });
 
     window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setEngineMenuOpen(false);
+      }
+
       if (event.key === "/" && document.activeElement !== dom.searchInput && !dom.settingsDialog.open) {
         event.preventDefault();
         dom.searchInput.focus();
@@ -1106,7 +1290,7 @@
 
     render();
     updateWeather();
-    setInterval(updateClock, 1000);
+    setInterval(updateClock, 250);
     setInterval(updateWeather, 30 * 60 * 1000);
   </script>
 </body>

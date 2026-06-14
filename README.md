@@ -1,14 +1,14 @@
-# Homepage
+# Haku
 
 A quiet, static browser homepage for search, time, weather, and a few useful links.
 
-Homepage is designed to stay small: no build step, no backend, no account, and no `config.json`. Settings are saved in the browser with `localStorage`.
+Haku is designed to stay small: no build step, no backend, no account, and no `config.json`. Settings are saved in the browser with `localStorage`.
 
 ## Features
 
-- Search with Google, Bing, DuckDuckGo, YouTube, or Reddit.
+- Search with general engines, media/community search, and developer/reference targets.
 - Pick which search engines are visible and choose a default.
-- Switch between digital and analog clock styles.
+- Switch between digital and manual clock styles.
 - Show current weather through Open-Meteo, with no API key required.
 - Add, edit, and remove quick links from the settings panel.
 - Install metadata through `manifest.json`.
@@ -31,13 +31,13 @@ Then open `http://localhost:8080`.
 The included Dockerfile serves the app with nginx:
 
 ```sh
-docker build -t homepage .
-docker run --rm -p 8080:80 homepage
+docker build -t haku .
+docker run --rm -p 8080:80 haku
 ```
 
 ## Configuration
 
-All configuration lives in browser storage under `homepage.settings.v1`.
+All configuration lives in browser storage under `haku.settings.v3`.
 
 Use the settings button in the top-right corner to edit:
 
@@ -47,7 +47,7 @@ Use the settings button in the top-right corner to edit:
 - weather city and units
 - quick links
 
-If no weather city is saved, Homepage uses the browser timezone as a first guess.
+If no weather city is saved, Haku uses the browser timezone as a first guess.
 
 ## Files
 
