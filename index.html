@@ -8,19 +8,19 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
+  <meta name="description" content="Haku is a zen browser homepage" />
   <meta name="theme-color" content="#e3e3e3" />
   <meta name="color-scheme" content="light" />
   <meta name="robots" content="index, follow" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Haku" />
   <meta property="og:title" content="Haku" />
-  <meta property="og:description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
+  <meta property="og:description" content="Haku is a zen browser homepage" />
   <meta property="og:image" content="favicon.svg" />
   <meta property="og:image:type" content="image/svg+xml" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Haku" />
-  <meta name="twitter:description" content="Haku is a quiet browser homepage with search, clock, weather, and links." />
+  <meta name="twitter:description" content="Haku is a zen browser homepage" />
   <meta name="twitter:image" content="favicon.svg" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -122,13 +122,15 @@
 
     html {
       min-height: 100%;
+      overflow: hidden;
       background:
         linear-gradient(180deg, var(--paper), var(--paper-deep));
     }
 
     body {
-      min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
+      overflow: hidden;
       background:
         linear-gradient(180deg, var(--paper), var(--paper-deep));
       color: var(--ink);
@@ -157,12 +159,31 @@
       font: inherit;
     }
 
+    input:not([type="checkbox"]):not([type="radio"]),
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: var(--radius);
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+      background-position:
+        calc(100% - 17px) 50%,
+        calc(100% - 12px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 32px;
+    }
+
     button {
       color: inherit;
     }
 
     .shell {
-      min-height: 100vh;
+      min-height: 100dvh;
       display: grid;
       place-items: center;
       padding: 40px 18px;
@@ -331,7 +352,7 @@
 
     .search-input {
       width: 100%;
-      min-height: 62px;
+      height: 62px;
       border: 0;
       border-radius: var(--radius);
       background: var(--surface);
@@ -400,7 +421,8 @@
     .engine-picker {
       position: absolute;
       left: 8px;
-      top: 8px;
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 2;
     }
 
@@ -422,10 +444,6 @@
       background: var(--surface-hover);
     }
 
-    .engine-picker-button[aria-expanded="true"] {
-      transform: translateY(-1px);
-    }
-
     .engine-picker-button img,
     .engine-option img {
       width: 19px;
@@ -441,6 +459,7 @@
       width: 210px;
       max-height: 282px;
       overflow: auto;
+      scrollbar-width: none;
       padding: 6px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -487,7 +506,8 @@
     .submit-button {
       position: absolute;
       right: 8px;
-      top: 8px;
+      top: 50%;
+      transform: translateY(-50%);
       width: 46px;
       height: 46px;
       border: 1px solid var(--line);
@@ -501,7 +521,7 @@
 
     .submit-button:hover {
       border-color: var(--line-strong);
-      transform: translateX(1px);
+      transform: translateY(-50%) translateX(1px);
     }
 
     .quiet-row {
@@ -660,9 +680,15 @@
 
     .settings-body {
       overflow: auto;
+      scrollbar-width: none;
       padding: 20px 18px 22px;
       display: grid;
       gap: 22px;
+    }
+
+    .settings-body::-webkit-scrollbar,
+    .engine-menu::-webkit-scrollbar {
+      display: none;
     }
 
     .section {
@@ -742,13 +768,20 @@
     .field input,
     .field select {
       width: 100%;
-      min-height: 42px;
+      height: 42px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--surface-soft);
+      background-color: var(--surface-soft);
       color: var(--ink);
-      padding: 0 11px;
       outline: none;
+    }
+
+    .field input {
+      padding: 0 11px;
+    }
+
+    .field select {
+      padding-left: 11px;
     }
 
     .field input:focus,
@@ -891,10 +924,10 @@
 
     .link-row input {
       width: 100%;
-      min-height: 38px;
+      height: 38px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--surface);
+      background-color: var(--surface);
       padding: 0 10px;
       color: var(--ink);
       outline: none;
@@ -947,7 +980,7 @@
       }
 
       .search-input {
-        min-height: 58px;
+        height: 58px;
         padding-left: 66px;
       }
 
@@ -1029,6 +1062,22 @@
 
       <div class="settings-body">
         <section class="section">
+          <h3 class="section-title">Appearance</h3>
+          <div class="field-grid">
+            <label class="field">
+              Theme
+              <select id="themeMode">
+                <option value="ink">Ink</option>
+                <option value="paper">Paper</option>
+                <option value="stone">Stone</option>
+                <option value="matcha">Matcha</option>
+                <option value="dawn">Dawn</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
           <h3 class="section-title">Clock</h3>
           <div class="field-grid">
             <label class="field">
@@ -1050,22 +1099,6 @@
         </section>
 
         <section class="section">
-          <h3 class="section-title">Appearance</h3>
-          <div class="field-grid">
-            <label class="field">
-              Theme
-              <select id="themeMode">
-                <option value="ink">Ink</option>
-                <option value="paper">Paper</option>
-                <option value="stone">Stone</option>
-                <option value="matcha">Matcha</option>
-                <option value="dawn">Dawn</option>
-              </select>
-            </label>
-          </div>
-        </section>
-
-        <section class="section">
           <h3 class="section-title">Search</h3>
           <div class="field-grid">
             <label class="field">
@@ -1073,6 +1106,13 @@
               <select id="suggestionsEnabled">
                 <option value="true">Online</option>
                 <option value="false">Hidden</option>
+              </select>
+            </label>
+            <label class="field">
+              Suggestion source
+              <select id="suggestionSource">
+                <option value="general">General web</option>
+                <option value="current">Current engine</option>
               </select>
             </label>
           </div>
@@ -1247,6 +1287,7 @@
       clockMode: "digital",
       timeFormat: "24",
       suggestionsEnabled: true,
+      suggestionSource: "general",
       weatherEnabled: true,
       weatherCity: "",
       weatherUnits: "celsius",
@@ -1283,6 +1324,7 @@
       timeFormat: document.getElementById("timeFormat"),
       themeMode: document.getElementById("themeMode"),
       suggestionsEnabled: document.getElementById("suggestionsEnabled"),
+      suggestionSource: document.getElementById("suggestionSource"),
       engineSettings: document.getElementById("engineSettings"),
       weatherEnabled: document.getElementById("weatherEnabled"),
       weatherCity: document.getElementById("weatherCity"),
@@ -1314,6 +1356,7 @@
         merged.activeEngine = ENGINES[merged.activeEngine] ? merged.activeEngine : merged.defaultEngine;
         merged.themeMode = THEME_META_COLORS[merged.themeMode] ? merged.themeMode : "ink";
         merged.suggestionsEnabled = merged.suggestionsEnabled !== false;
+        merged.suggestionSource = sanitizeSuggestionSource(merged.suggestionSource);
         merged.weatherEnabled = merged.weatherEnabled !== false;
         if (!merged.enabledEngines.includes(merged.activeEngine)) merged.activeEngine = merged.defaultEngine;
         if (!merged.enabledEngines.includes(merged.defaultEngine)) merged.defaultEngine = merged.enabledEngines[0];
@@ -1402,6 +1445,10 @@
       return sanitizeEngineOrder(order).filter((key) => enabledSet.has(key));
     }
 
+    function sanitizeSuggestionSource(value) {
+      return value === "current" ? "current" : "general";
+    }
+
     function sanitizeLinks(value) {
       if (!Array.isArray(value)) return [];
       return value
@@ -1434,6 +1481,7 @@
       refreshEngines(state.settings.customEngines);
       state.settings.themeMode = THEME_META_COLORS[state.settings.themeMode] ? state.settings.themeMode : "ink";
       state.settings.suggestionsEnabled = state.settings.suggestionsEnabled !== false;
+      state.settings.suggestionSource = sanitizeSuggestionSource(state.settings.suggestionSource);
       state.settings.weatherEnabled = state.settings.weatherEnabled !== false;
       state.settings.engineOrder = sanitizeEngineOrder(state.settings.engineOrder, state.settings.enabledEngines);
       state.settings.enabledEngines = orderEnabledEngines(state.settings.enabledEngines, state.settings.engineOrder);
@@ -1643,6 +1691,7 @@
       dom.timeFormat.value = state.settings.timeFormat;
       dom.themeMode.value = state.settings.themeMode;
       dom.suggestionsEnabled.value = String(state.settings.suggestionsEnabled);
+      dom.suggestionSource.value = state.settings.suggestionSource;
       dom.weatherEnabled.value = String(state.settings.weatherEnabled);
       dom.weatherCity.value = state.settings.weatherCity;
       dom.weatherUnits.value = state.settings.weatherUnits;
@@ -1841,46 +1890,76 @@
       return trimmed.length >= 2 ? { engineKey: state.settings.activeEngine, prefixToken: "", query: trimmed } : null;
     }
 
-    function duckDuckGoSuggestionProvider(engineKey) {
+    function loadJsonp(url, signal) {
+      return new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+          reject(new DOMException("Aborted", "AbortError"));
+          return;
+        }
+
+        const callbackName = `hakuSuggest${Date.now()}${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement("script");
+        let didCleanup = false;
+        const cleanup = () => {
+          if (didCleanup) return;
+          didCleanup = true;
+          window[callbackName] = () => {};
+          window.setTimeout(() => delete window[callbackName], 1000);
+          script.remove();
+          signal?.removeEventListener("abort", onAbort);
+        };
+        const onAbort = () => {
+          cleanup();
+          reject(new DOMException("Aborted", "AbortError"));
+        };
+
+        window[callbackName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
+        script.async = true;
+        script.src = `${url}${url.includes("?") ? "&" : "?"}callback=${encodeURIComponent(callbackName)}`;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Suggestion request failed"));
+        };
+        signal?.addEventListener("abort", onAbort, { once: true });
+        document.head.append(script);
+      });
+    }
+
+    function googleSuggestionProvider(name, extraParams = "") {
       return {
-        name: ENGINES[engineKey]?.name || "DuckDuckGo",
-        url: (query) => `https://duckduckgo.com/ac/?q=${encodeURIComponent(query)}&type=list`,
-        parse: (data) => Array.isArray(data) ? data.map((item) => item.phrase || item).filter(Boolean) : []
+        name,
+        request: (query, signal) => loadJsonp(`https://suggestqueries.google.com/complete/search?client=firefox${extraParams}&q=${encodeURIComponent(query)}`, signal),
+        parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
       };
     }
 
-    function suggestionProviders(engineKey) {
-      const fallback = duckDuckGoSuggestionProvider(engineKey);
+    function currentEngineSuggestionProviders(engineKey) {
       if (engineKey === "google") {
-        return [{
-          name: "Google",
-          url: (query) => `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`,
-          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
-        }, fallback];
+        return [googleSuggestionProvider("Google")];
       }
       if (engineKey === "youtube") {
-        return [{
-          name: "YouTube",
-          url: (query) => `https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(query)}`,
-          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
-        }, fallback];
-      }
-      if (engineKey === "bing") {
-        return [{
-          name: "Bing",
-          url: (query) => `https://api.bing.com/osjson.aspx?query=${encodeURIComponent(query)}`,
-          parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
-        }, fallback];
+        return [googleSuggestionProvider("YouTube", "&ds=yt")];
       }
       if (engineKey === "wikipedia") {
         return [{
           name: "Wikipedia",
           url: (query) => `https://en.wikipedia.org/w/api.php?action=opensearch&namespace=0&limit=8&format=json&origin=*&search=${encodeURIComponent(query)}`,
           parse: (data) => Array.isArray(data?.[1]) ? data[1] : []
-        }, fallback];
+        }];
       }
 
-      return [fallback];
+      return [];
+    }
+
+    function suggestionProviders(engineKey) {
+      if (state.settings.suggestionSource === "current") {
+        return currentEngineSuggestionProviders(engineKey);
+      }
+
+      return [googleSuggestionProvider("General web")];
     }
 
     function scheduleSuggestions() {
@@ -1899,14 +1978,26 @@
         return;
       }
 
+      const providers = suggestionProviders(context.engineKey);
+      if (!providers.length) {
+        closeSuggestions();
+        return;
+      }
+
       if (state.suggestAbort) state.suggestAbort.abort();
       const requestId = state.suggestRequestId + 1;
       state.suggestRequestId = requestId;
       state.suggestAbort = new AbortController();
-      for (const provider of suggestionProviders(context.engineKey)) {
+      for (const provider of providers) {
         try {
-          const response = await fetch(provider.url(context.query), { signal: state.suggestAbort.signal });
-          const data = await response.json();
+          let data;
+          if (provider.request) {
+            data = await provider.request(context.query, state.suggestAbort.signal);
+          } else {
+            const response = await fetch(provider.url(context.query), { signal: state.suggestAbort.signal });
+            if (!response.ok) continue;
+            data = await response.json();
+          }
           if (requestId !== state.suggestRequestId) return;
           const seen = new Set();
           const items = provider.parse(data)
@@ -2303,6 +2394,10 @@
     dom.themeMode.addEventListener("change", () => updateSettings({ themeMode: dom.themeMode.value }));
     dom.suggestionsEnabled.addEventListener("change", () => {
       updateSettings({ suggestionsEnabled: dom.suggestionsEnabled.value === "true" });
+      scheduleSuggestions();
+    });
+    dom.suggestionSource.addEventListener("change", () => {
+      updateSettings({ suggestionSource: dom.suggestionSource.value });
       scheduleSuggestions();
     });
     dom.weatherEnabled.addEventListener("change", () => {

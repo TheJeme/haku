@@ -1,7 +1,7 @@
 {
   "name": "Haku",
   "short_name": "Haku",
-  "description": "Haku is a quiet browser homepage with search, clock, weather, and links.",
+  "description": "Haku is a zen browser homepage",
   "id": "./",
   "start_url": "./",
   "scope": "./",
