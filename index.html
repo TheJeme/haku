@@ -412,12 +412,6 @@
       white-space: nowrap;
     }
 
-    .suggestion-source {
-      color: var(--muted);
-      font-size: 0.76rem;
-      white-space: nowrap;
-    }
-
     .engine-picker {
       position: absolute;
       left: 8px;
@@ -2047,7 +2041,7 @@
 
           if (!items.length) continue;
           state.suggestions = items;
-          state.suggestionContext = { ...context, providerName: provider.name };
+          state.suggestionContext = context;
           state.suggestionIndex = -1;
           renderSuggestions();
           return;
@@ -2070,7 +2064,6 @@
       dom.suggestionMenu.innerHTML = state.suggestions.map((suggestion, index) => `
         <button class="suggestion-option${index === state.suggestionIndex ? " is-active" : ""}" type="button" role="option" data-suggestion-index="${index}" aria-selected="${index === state.suggestionIndex}">
           <span>${escapeHtml(displaySuggestion(suggestion))}</span>
-          <span class="suggestion-source">${escapeHtml(state.suggestionContext.providerName)}</span>
         </button>
       `).join("");
     }
